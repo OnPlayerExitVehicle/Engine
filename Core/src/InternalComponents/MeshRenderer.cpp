@@ -12,8 +12,8 @@ std::shared_ptr<Shader> MeshRenderer::GetDefaultShader()
 	if (!defaultShader)
 	{
 		defaultShader = std::make_shared<Shader>();
-		defaultShader->AttachShader("../../../../Core/shaders/vertex.glsl", GL_VERTEX_SHADER);
-		defaultShader->AttachShader("../../../../Core/shaders/fragment.glsl", GL_FRAGMENT_SHADER);
+		defaultShader->AttachShader(SHADERS_DIRECTORY"vertex.glsl", GL_VERTEX_SHADER);
+		defaultShader->AttachShader(SHADERS_DIRECTORY"fragment.glsl", GL_FRAGMENT_SHADER);
 		defaultShader->Link();
 	}
 
@@ -21,24 +21,24 @@ std::shared_ptr<Shader> MeshRenderer::GetDefaultShader()
 }
 
 MeshRenderer::MeshRenderer() : 
-	shader(GetDefaultShader()), 
 	mesh(MeshFactory::GetMesh(MeshType::Cube)), 
+	shader(GetDefaultShader()), 
 	color(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)),
 	textured(false)
 { }
 
 MeshRenderer::MeshRenderer(const glm::vec4& color) : 
-	shader(GetDefaultShader()),
 	mesh(MeshFactory::GetMesh(MeshType::Cube)),
+	shader(GetDefaultShader()),
 	color(color),
 	textured(false)
 { }
 
 MeshRenderer::MeshRenderer(std::shared_ptr<Texture> texture) :
-	shader(GetDefaultShader()),
 	mesh(MeshFactory::GetMesh(MeshType::Cube)),
+	texture(std::move(texture)),
+	shader(GetDefaultShader()),
 	color(glm::vec4(0.0f)),
-	texture(texture),
 	textured(true)
 { }
 
@@ -67,14 +67,13 @@ void MeshRenderer::OnGUI()
 {
 	if(ImGui::Checkbox("Textured", &textured) && textured && texture == nullptr)
 	{
-		int result = rand() % 2;
-		switch (result)
+		switch (rand() % 2)
 		{
 		case 0:
-			texture = TextureLoader::LoadTexture("../../../../Core/textures/brick.jpg");
+			texture = TextureLoader::LoadTexture(TEXTURES_DIRECTORY"brick.jpg");
 			break;
 		case 1:
-			texture = TextureLoader::LoadTexture("../../../../Core/textures/container.jpg");
+			texture = TextureLoader::LoadTexture(TEXTURES_DIRECTORY"container.jpg");
 			break;
 		default:
 			textured = false;

@@ -8,6 +8,7 @@ set(PROJECT_DEPENDENCY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../Dependencies")
 set(BULLET_LIBRARY_DIR "${PROJECT_DEPENDENCY_DIR}/bullet3-3.24/build_cmake/lib")
 set(GLFW_LIBRARY_DIR "${PROJECT_DEPENDENCY_DIR}/GLFW/lib-vc2022/glfw3.lib")
 set(IMGUI_DIR ${PROJECT_DEPENDENCY_DIR}/IMGUI)
+set(PROJECT_EXECUTABLE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../bin")
 file(GLOB IMGUI_SOURCEFILES ${IMGUI_DIR}/*.cpp)
 add_definitions(-DIMGUI_IMPL_OPENGL_LOADER_GLAD)
 
@@ -24,6 +25,7 @@ set(PROJECT_SOURCES
  "src/InternalComponents/MeshRenderer.cpp" "src/Texture.cpp" "src/Mesh.cpp" "src/Shader.cpp" "src/Scene.cpp" "src/InternalComponents/Camera.cpp" "src/Utilities/FileReader.cpp" "src/Engine.cpp" "src/Utilities/MeshFactory.cpp" "src/InternalComponents/Rigidbody.cpp" "src/HTime.cpp" "src/Input.cpp"  "src/InternalComponents/TestComponent.cpp" "src/InternalComponents/BoxCollider.cpp" "src/InternalComponents/PlaneCollider.cpp" "src/InternalComponents/Collider.cpp" "src/Physics.cpp" "src/Quaternion.cpp" ${IMGUI_SOURCEFILES} "src/GUI.cpp" "src/Utilities/TextureLoader.cpp")
 
 add_executable (Engine ${PROJECT_SOURCES})
+set_target_properties(Engine PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_EXECUTABLE_DIR})
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 	set(LIBS 

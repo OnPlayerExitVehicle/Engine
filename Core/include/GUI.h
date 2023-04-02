@@ -2,9 +2,9 @@
 #include "GLAD/glad.h"
 //#include "GLFW/include/GLFW/glfw3.h"
 
-#include "imgui/imgui.h"
-#include "imgui/imgui_impl_glfw.h"
-#include "imgui/imgui_impl_opengl3.h"
+#include "IMGUI/imgui.h"
+#include "IMGUI/imgui_impl_glfw.h"
+#include "IMGUI/imgui_impl_opengl3.h"
 #include <memory>
 #include <string>
 

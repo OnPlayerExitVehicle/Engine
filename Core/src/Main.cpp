@@ -34,7 +34,7 @@ int main()
 		std::cout << "Window is NULL" << std::endl;
 	}
 	glfwMakeContextCurrent(window);
-	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+	gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
 
 	
 	std::cout << "Hello Bullet" << std::endl;
@@ -65,8 +65,8 @@ int main()
 		cube->AddComponent<Rigidbody>(10.0f);
 	}*/
 	
-	auto texture1 = TextureLoader::LoadTexture("../../../../Core/textures/brick.jpg");
-	auto texture2 = TextureLoader::LoadTexture("../../../../Core/textures/container.jpg");
+	auto texture1 = TextureLoader::LoadTexture(TEXTURES_DIRECTORY"brick.jpg");
+	auto texture2 = TextureLoader::LoadTexture(TEXTURES_DIRECTORY"container.jpg");
 	
 	auto cube = scene->CreateObject("Haydar", Vector3(0.0f, 7.0f, 0.0f));
 	cube->AddComponent<MeshRenderer>();

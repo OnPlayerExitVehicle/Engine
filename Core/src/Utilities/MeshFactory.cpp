@@ -3,12 +3,10 @@
 
 std::map<MeshType, std::shared_ptr<Mesh>> MeshFactory::meshMap;
 
-std::shared_ptr<Mesh> MeshFactory::GetMesh(MeshType type)
+std::shared_ptr<Mesh> MeshFactory::GetMesh(const MeshType type)
 {
-	if (meshMap.count(type) > 0)
-	{
-		return meshMap[type];
-	}
+	if (meshMap.contains(type)) return meshMap[type];
+
 	if (type == MeshType::Cube)
 	{
 		/*std::vector<glm::vec3> vertexVector = {
@@ -22,7 +20,7 @@ std::shared_ptr<Mesh> MeshFactory::GetMesh(MeshType type)
 			glm::vec3(0.5f, -0.5f, -0.5f)
 		};*/
 
-		glm::vec3 corners[8]{
+		const glm::vec3 corners[8]{
 			glm::vec3(-0.5f,  0.5f,  0.5f),
 			glm::vec3(0.5f,  0.5f,  0.5f),
 			glm::vec3(0.5f, -0.5f,  0.5f),

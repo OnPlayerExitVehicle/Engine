@@ -6,7 +6,7 @@
 #include "Globals.h"
 #include <iostream>
 
-class MeshRenderer : public Component
+class MeshRenderer final : public Component
 {
 private:
 	std::shared_ptr<Mesh>	 mesh;
@@ -23,8 +23,8 @@ protected:
 public:
 	static std::shared_ptr<Shader> GetDefaultShader();
 	MeshRenderer();
-	MeshRenderer(const glm::vec4& color);
-	MeshRenderer(std::shared_ptr<Texture> texture);
+	explicit MeshRenderer(const glm::vec4& color);
+	explicit MeshRenderer(std::shared_ptr<Texture> texture);
 
 	void OnGUI() override;
 
