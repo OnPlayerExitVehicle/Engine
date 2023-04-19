@@ -12,7 +12,7 @@ Rigidbody::Rigidbody(float mass) : isDynamic(true), mass(mass) { }
 void Rigidbody::Awake()
 {
 	std::cout << "Awake" << std::endl;
-	auto gameObject = GetObject();
+	auto gameObject = this->GetGameObject();
 	
 	std::shared_ptr<Collider> collider;
 	if (!gameObject->TryGetComponent<Collider>(collider))
@@ -69,7 +69,7 @@ void Rigidbody::BeforeFixedUpdate()
 	physicsTransform.setOrigin(transform->position);
 	physicsTransform.setRotation(transform->rotation);
 	Collider collider;
-	GetObject()->GetComponent<Collider>()->GetBulletCollider()->setLocalScaling(transform->scale);
+	GetGameObject()->GetComponent<Collider>()->GetBulletCollider()->setLocalScaling(transform->scale);
 	//physicsMotion->setWorldTransform(physicsTransform);
 	physicsRigidbody->setWorldTransform(physicsTransform);
 

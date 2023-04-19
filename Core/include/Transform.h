@@ -1,7 +1,6 @@
 #pragma once
 #include <memory>
 #include <vector>
-#include <GLM/glm/vec3.hpp>
 #include "Vector3.h"
 #include "Quaternion.h"
 #include <GLM/glm/mat4x4.hpp>

@@ -6,7 +6,7 @@
 #include "Globals.h"
 #include <iostream>
 
-class MeshRenderer final : public Component
+class MeshRenderer : public Component
 {
 private:
 	std::shared_ptr<Mesh>	 mesh;

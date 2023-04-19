@@ -1,7 +1,7 @@
 #pragma once
 
-constexpr int WINDOW_WIDTH  = 1920;
-constexpr int WINDOW_HEIGHT = 1080;
+constexpr int WINDOW_WIDTH  = 1280;
+constexpr int WINDOW_HEIGHT = 960;
 
 #define _STD_ std::
 #define _STRING_R_ _STD_ string

@@ -6,7 +6,7 @@
 
 void TestComponent::Awake()
 {
-	isCamera = GetObject()->HasComponent<Camera>();
+	isCamera = GetGameObject()->HasComponent<Camera>();
 }
 
 void TestComponent::Update(float deltaTime)

@@ -11,7 +11,7 @@ void Component::FixedUpdate(float fixedDeltaTime) { }
 void Component::OnDestroy() { }
 void Component::OnGUI() { } // public
 
-std::shared_ptr<GameObject> Component::GetObject() const
+std::shared_ptr<GameObject> Component::GetGameObject() const
 {
 	if (!m_object.expired())
 	{

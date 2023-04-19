@@ -34,7 +34,7 @@ public:
 
 	virtual std::string GetName() = 0;
 
-	std::shared_ptr<GameObject> GetObject() const;
+	std::shared_ptr<GameObject> GetGameObject() const;
 
 	std::shared_ptr<Transform> GetTransform() const;
 };
