@@ -1,9 +1,11 @@
 #pragma once
+#include <map>
+
 #include "GameObject.h"
-#include <GLM/glm/vec3.hpp>
 #include "Singleton.h"
 #include "bullet3-3.24/src/btBulletDynamicsCommon.h"
 #include "GUI.h"
+#include "NetworkClient.h"
 
 class Rigidbody;
 
@@ -32,4 +34,12 @@ private:
 	btConstraintSolver* physicsSolver;
 	btCollisionConfiguration* physicsCollisionConfig;
 	GUI gui;
+
+	
+	/*std::map<uint32_t, std::shared_ptr<Transform>> networkTransformMap;
+	std::vector<std::shared_ptr<Transform>> localNetworkObjects;*/
+
+public:
+	void ProcessNetworkUpdate();
+	NetworkClient networkClient;
 };

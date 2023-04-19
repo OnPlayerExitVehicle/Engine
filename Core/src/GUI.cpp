@@ -143,6 +143,11 @@ void GUI::DrawObjectCreator()
 
     }
 
+    if(ImGui::Button("Spawn"))
+    {
+        Scene::Instance->networkClient.SpawnLocalNetworkObject();
+    }
+
     ImGui::End();
 }
 

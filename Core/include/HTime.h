@@ -9,6 +9,9 @@ public: // private:
 	static float fixedDtCounter;
 	static int fixedFrameCount;
 
+	static float networkDtCounter;
+	static int networkFrameCount;
+
 	static int frameCount;
 
 	static float secondCounter;
@@ -18,4 +21,5 @@ public: // private:
 public:
 	static float Dt;
 	const static float FixedDt;
+	const static float NetworkDt;
 };
