@@ -3,10 +3,11 @@
 #include "HTime.h"
 #include <exception>
 #include <iostream>
+#include "MeshRenderer.h"
 
 Scene* Scene::Instance;
 
-Scene::Scene(GLFWwindow* window)
+Scene::Scene(GLFWwindow* window) : networkClient(this)
 {
 	gui.Init(window);
 	if (Instance == nullptr)
@@ -25,6 +26,8 @@ Scene::Scene(GLFWwindow* window)
 	physicsWorld		   = new btDiscreteDynamicsWorld(physicsDispatcher, physicsBroadPhase, physicsSolver, physicsCollisionConfig);
 
 	physicsWorld->setGravity(btVector3(.0f, -9.81f, .0f));
+
+	//networkClient.Connect("127.0.0.1", 60000);
 }
 
 void Scene::Process()
@@ -59,6 +62,12 @@ void Scene::ProcessFixedUpdate()
 	for (auto& go : objectList)
 		go->InvokeFixedUpdate(fixedDeltaTime);
 }
+
+void Scene::ProcessNetworkUpdate()
+{
+	networkClient.ProcessNetworkUpdate(Time::NetworkDt);
+}
+
 
 void Scene::RegisterPhysicsObject(btRigidBody* rigidBody)
 {
