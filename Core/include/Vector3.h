@@ -1,6 +1,6 @@
 #pragma once
 #include <GLM/glm/vec3.hpp>
-#include "bullet3-3.24/src/btBulletDynamicsCommon.h"
+#include "Bullet/src/btBulletDynamicsCommon.h"
 #include <ostream>
 #include <format>
 

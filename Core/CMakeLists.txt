@@ -2,6 +2,9 @@
 
 project(Core)
 
+add_subdirectory("../Dependencies/Bullet" "./Bullet")
+add_subdirectory("../Dependencies/GLM" "./GLM")
+
 set(PROJECT_INCLUDE_DIR "./include")
 set(PROJECT_SOURCES_DIR "./src")
 set(PROJECT_DEPENDENCY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../Dependencies")
@@ -15,7 +18,7 @@ set(NETWORKING_INCLUDE_DIR "../Networking/include")
 file(GLOB IMGUI_SOURCEFILES ${IMGUI_DIR}/*.cpp)
 add_definitions(-DIMGUI_IMPL_OPENGL_LOADER_GLAD)
 
-include_directories(${PROJECT_INCLUDE_DIR} ${PROJECT_DEPENDENCY_DIR} ${PROJECT_INCLUDE_DIR}/InternalComponents  ${PROJECT_INCLUDE_DIR}/Utilities)
+include_directories(${PROJECT_INCLUDE_DIR} ${PROJECT_DEPENDENCY_DIR} ${PROJECT_DEPENDENCY_DIR}/Bullet/src/ ${PROJECT_DEPENDENCY_DIR}/IMGUI ${PROJECT_DEPENDENCY_DIR}/GLAD ${PROJECT_INCLUDE_DIR}/InternalComponents ${PROJECT_INCLUDE_DIR}/Utilities)
 
 set(PROJECT_SOURCES 
 					"${PROJECT_SOURCES_DIR}/Main.cpp"

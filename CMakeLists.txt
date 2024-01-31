@@ -3,10 +3,10 @@
 project (Engine)
 SET(CMAKE_CXX_STANDARD 20)
 
+set(DEPENDENCY_DIR "./Dependencies")
 set(NETWORKING_INCLUDE_DIR "./Networking/include")
-set(ASIO_INCLUDE_DIR "C:/SDK/asio-1.22.2/include")
 
-include_directories(${NETWORKING_INCLUDE_DIR} ${ASIO_INCLUDE_DIR})
+include_directories(${NETWORKING_INCLUDE_DIR} ${DEPENDENCY_DIR}/Bullet/src ${DEPENDENCY_DIR}/ASIO/asio/include)
 
 add_subdirectory ("Networking")
 add_subdirectory ("Core")

@@ -5,6 +5,7 @@
 #include "GLM/glm/vec3.hpp"
 #include "GLM/glm/vec2.hpp"
 #include <vector>
+#include <memory>
 
 class Mesh;
 
