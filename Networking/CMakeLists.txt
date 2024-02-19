@@ -13,8 +13,18 @@ set(PROJECT_SOURCES
 	"${PROJECT_SOURCES_DIR}/NetworkDelegate.cpp"
 	"${PROJECT_SOURCES_DIR}/NetworkComponent.cpp"
 	"${PROJECT_SOURCES_DIR}/NetworkTransform.cpp"
+	"${PROJECT_SOURCES_DIR}/NetworkClient.cpp"
 )
 
-include_directories(${PROJECT_INCLUDE_DIR} ${CORE_INCLUDE_DIR} ${DEPENDENCY_DIR})
+include_directories(
+	${PROJECT_INCLUDE_DIR} 
+	${CORE_INCLUDE_DIR} 
+	${DEPENDENCY_DIR} 
+	${DEPENDENCY_DIR}/GLAD
+	${DEPENDENCY_DIR}/IMGUI
+	${DEPENDENCY_DIR}/GLFW
+	${CORE_INCLUDE_DIR}/InternalComponents
+	${CORE_INCLUDE_DIR}/Utilities
+)
 add_library(Networking STATIC ${PROJECT_SOURCES})
 set_target_properties(Networking PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_LIBRARY_DIR})

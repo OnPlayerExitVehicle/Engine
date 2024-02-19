@@ -1,6 +1,0 @@
-Name: bullet_robotics_gui
-Description: Bullet GUI extras for robotics
-Requires: bullet
-Version: 3.26
-Libs: -L/usr/local/lib -lBulletRoboticsGUI
-Cflags:  -I/usr/local/include/bullet -I/usr/local/include/bullet_robotics_gui
