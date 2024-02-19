@@ -2,9 +2,9 @@
 
 project(Core)
 
-add_subdirectory("../Dependencies/Bullet" "./Bullet")
-add_subdirectory("../Dependencies/GLM" "./GLM")
-add_subdirectory("../Dependencies/GLFW" "./GLFW")
+add_subdirectory("../Dependencies/Bullet" "./Bullet" EXCLUDE_FROM_ALL)
+add_subdirectory("../Dependencies/GLM" "./GLM" EXCLUDE_FROM_ALL)
+add_subdirectory("../Dependencies/GLFW" "./GLFW" EXCLUDE_FROM_ALL)
 
 set(PROJECT_INCLUDE_DIR "./include")
 set(PROJECT_SOURCES_DIR "./src")
@@ -19,21 +19,30 @@ add_definitions(-DIMGUI_IMPL_OPENGL_LOADER_GLAD)
 
 include_directories(${PROJECT_INCLUDE_DIR} ${PROJECT_DEPENDENCY_DIR} ${PROJECT_DEPENDENCY_DIR}/Bullet/src/ ${PROJECT_DEPENDENCY_DIR}/IMGUI ${PROJECT_DEPENDENCY_DIR}/GLAD ${PROJECT_INCLUDE_DIR}/InternalComponents ${PROJECT_INCLUDE_DIR}/Utilities)
 
-set(PROJECT_SOURCES 
-					${IMGUI_SOURCEFILES}
-					"${IMGUI_DIR}/backends/imgui_impl_glfw.cpp"
-					"${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp"
-					"${PROJECT_SOURCES_DIR}/Main.cpp"
-					"${PROJECT_DEPENDENCY_DIR}/GLAD/glad.c"
-					"${PROJECT_SOURCES_DIR}/Component.cpp" 
-					"${PROJECT_SOURCES_DIR}/GameObject.cpp" 
-					"${PROJECT_SOURCES_DIR}/Transform.cpp" 
-					"${PROJECT_INCLUDE_DIR}/GameObject.h" 
-					"${PROJECT_SOURCES_DIR}/Vector3.cpp"
- "src/InternalComponents/MeshRenderer.cpp" "src/Texture.cpp" "src/Mesh.cpp" "src/Shader.cpp" "src/Scene.cpp" "src/InternalComponents/Camera.cpp" "src/Utilities/FileReader.cpp" "src/Engine.cpp" "src/Utilities/MeshFactory.cpp" "src/InternalComponents/Rigidbody.cpp" "src/HTime.cpp" "src/Input.cpp"  "src/InternalComponents/TestComponent.cpp" "src/InternalComponents/BoxCollider.cpp" "src/InternalComponents/PlaneCollider.cpp" "src/InternalComponents/Collider.cpp" "src/Physics.cpp" "src/Quaternion.cpp" "src/GUI.cpp" "src/Utilities/TextureLoader.cpp")
+file(GLOB_RECURSE PROJECT_SOURCES ${PROJECT_SOURCES_DIR}/*.cpp)
+file(GLOB IMGUI_SOURCES ${IMGUI_DIR}/*.cpp)
 
-add_executable (Engine ${PROJECT_SOURCES})
-set_target_properties(Engine PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_EXECUTABLE_DIR})
+# set(PROJECT_SOURCES 
+# 					${IMGUI_SOURCEFILES}
+# 					"${IMGUI_DIR}/backends/imgui_impl_glfw.cpp"
+# 					"${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp"
+# 					"${PROJECT_SOURCES_DIR}/Main.cpp"
+# 					"${PROJECT_DEPENDENCY_DIR}/GLAD/glad.c"
+# 					"${PROJECT_SOURCES_DIR}/Component.cpp" 
+# 					"${PROJECT_SOURCES_DIR}/GameObject.cpp" 
+# 					"${PROJECT_SOURCES_DIR}/Transform.cpp" 
+# 					"${PROJECT_INCLUDE_DIR}/GameObject.h" 
+# 					"${PROJECT_SOURCES_DIR}/Vector3.cpp"
+#  "src/InternalComponents/MeshRenderer.cpp" "src/Texture.cpp" "src/Mesh.cpp" "src/Shader.cpp" "src/Scene.cpp" "src/InternalComponents/Camera.cpp" "src/Utilities/FileReader.cpp" "src/Engine.cpp" "src/Utilities/MeshFactory.cpp" "src/InternalComponents/Rigidbody.cpp" "src/HTime.cpp" "src/Input.cpp"  "src/InternalComponents/TestComponent.cpp" "src/InternalComponents/BoxCollider.cpp" "src/InternalComponents/PlaneCollider.cpp" "src/InternalComponents/Collider.cpp" "src/Physics.cpp" "src/Quaternion.cpp" "src/GUI.cpp" "src/Utilities/TextureLoader.cpp")
+
+add_executable(
+	Engine 
+	${PROJECT_SOURCES}
+	${IMGUI_SOURCES}
+	${IMGUI_DIR}/backends/imgui_impl_glfw.cpp 
+	${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp 
+	${PROJECT_DEPENDENCY_DIR}/GLAD/glad.c)
+
 
 if(WIN32)
 	set(GLFW_LIBRARY_DIR "${PROJECT_DEPENDENCY_DIR}/GLFW/lib-vc2022/glfw3.lib")
@@ -78,6 +87,13 @@ else()
 	)
 endif()
 
-add_library(combined INTERFACE)
-target_link_libraries(combined INTERFACE BulletCollision BulletDynamics LinearMath glfw ${NETWORKING_LIBRARY_DIR})
+# add_library(combined INTERFACE)
+# target_link_libraries(combined INTERFACE BulletCollision BulletDynamics LinearMath glfw ${NETWORKING_LIBRARY_DIR})
 target_link_libraries(Engine BulletCollision BulletDynamics LinearMath glfw Networking)
+set_property(TARGET Engine PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+set_property(TARGET BulletCollision PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+set_property(TARGET BulletDynamics PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+set_property(TARGET LinearMath PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+set_property(TARGET glfw PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+set_property(TARGET Networking PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+set_target_properties(Engine PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_EXECUTABLE_DIR})
