@@ -28,7 +28,7 @@ Engine::Engine(int windowWidth, int windowHeight)
 
 void Engine::InitWindow(int windowWidth, int windowHeight)
 {
-	glfwInit();
+	assert(glfwInit());
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 	window = glfwCreateWindow(windowWidth, windowHeight, std::format("Engine ({} bit)", sizeof(void*) * 8).c_str(), nullptr, nullptr);
 	assert(window);
@@ -37,7 +37,7 @@ void Engine::InitWindow(int windowWidth, int windowHeight)
 void Engine::InitGraphics()
 {
 	glfwMakeContextCurrent(window);
-	gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
+	(void)gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
