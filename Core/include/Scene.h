@@ -23,7 +23,10 @@ private:
 	friend class GUI;
 	friend class Rigidbody;
 
+	bool IsConnected() const;
+	void ConnectToServer(const std::string& address, uint16_t port);
 	void RegisterPhysicsObject(btRigidBody* rigidBody);
+	static bool ContactAddedCallback(btManifoldPoint&, const btCollisionObjectWrapper*, int, int, const btCollisionObjectWrapper*, int, int);
 
 	std::vector<std::shared_ptr<GameObject>> objectList;
 	std::vector<btRigidBody*> physicsObjectList;

@@ -34,37 +34,39 @@ std::shared_ptr<Mesh> MeshFactory::GetMesh(const MeshType type)
 		std::vector<TexturedVertex> texturedVertexVector = {
 			// Üst
 
-			{corners[0], glm::vec2(0.0f, 1.0f)},
-			{corners[1], glm::vec2(1.0f, 1.0f)},
-			{corners[2], glm::vec2(1.0f, 0.0f)},
-			{corners[3], glm::vec2(0.0f, 0.0f)},
+			// Köþe noktalarý (vec3), Kaplama noktalarý (vec2), Yüzey normalleri (vec3)
+			{  corners[0],		      glm::vec2(0.0f, 1.0f),    glm::vec3(0.0f, 0.0f, 1.0f)},
+			{  corners[1],		      glm::vec2(1.0f, 1.0f),    glm::vec3(0.0f, 0.0f, 1.0f)},
+			{  corners[2],		      glm::vec2(1.0f, 0.0f),    glm::vec3(0.0f, 0.0f, 1.0f)},
+			{  corners[3],		      glm::vec2(0.0f, 0.0f),    glm::vec3(0.0f, 0.0f, 1.0f)},
+
 			// Ön
 
-			{corners[1], glm::vec2(0.0f, 1.0f)},
-			{corners[5], glm::vec2(1.0f, 1.0f)},
-			{corners[6], glm::vec2(1.0f, 0.0f)},
-			{corners[2], glm::vec2(0.0f, 0.0f)},
+			{corners[1], glm::vec2(0.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f)},
+			{corners[5], glm::vec2(1.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f)},
+			{corners[6], glm::vec2(1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f)},
+			{corners[2], glm::vec2(0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f)},
 			// Sað
 
-			{corners[4], glm::vec2(0.0f, 1.0f)},
-			{corners[5], glm::vec2(1.0f, 1.0f)},
-			{corners[1], glm::vec2(1.0f, 0.0f)},
-			{corners[0], glm::vec2(0.0f, 0.0f)},
+			{corners[4], glm::vec2(0.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f)},
+			{corners[5], glm::vec2(1.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f)},
+			{corners[1], glm::vec2(1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)},
+			{corners[0], glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)},
 			// Arka
-			{corners[4], glm::vec2(0.0f, 1.0f)},
-			{corners[0], glm::vec2(1.0f, 1.0f)},
-			{corners[3], glm::vec2(1.0f, 0.0f)},
-			{corners[7], glm::vec2(0.0f, 0.0f)},
+			{corners[4], glm::vec2(0.0f, 1.0f), glm::vec3(-1.0f, 0.0f, 0.0f)},
+			{corners[0], glm::vec2(1.0f, 1.0f), glm::vec3(-1.0f, 0.0f, 0.0f)},
+			{corners[3], glm::vec2(1.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f)},
+			{corners[7], glm::vec2(0.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f)},
 			// Sol
-			{corners[7], glm::vec2(0.0f, 1.0f)},
-			{corners[6], glm::vec2(1.0f, 1.0f)},
-			{corners[2], glm::vec2(1.0f, 0.0f)},
-			{corners[3], glm::vec2(0.0f, 0.0f)},
+			{corners[7], glm::vec2(0.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f)},
+			{corners[6], glm::vec2(1.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f)},
+			{corners[2], glm::vec2(1.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)},
+			{corners[3], glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)},
 
-			{corners[4], glm::vec2(0.0f, 1.0f)},
-			{corners[5], glm::vec2(1.0f, 1.0f)},
-			{corners[6], glm::vec2(1.0f, 0.0f)},
-			{corners[7], glm::vec2(0.0f, 0.0f)}
+			{corners[4], glm::vec2(0.0f, 1.0f), glm::vec3(0.0f, 0.0f, -1.0f)},
+			{corners[5], glm::vec2(1.0f, 1.0f), glm::vec3(0.0f, 0.0f, -1.0f)},
+			{corners[6], glm::vec2(1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f)},
+			{corners[7], glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f)}
 		};
 
 		std::vector<unsigned int> indexVector(36);

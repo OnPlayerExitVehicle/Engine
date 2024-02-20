@@ -4,6 +4,7 @@
 #include <exception>
 #include <iostream>
 #include "MeshRenderer.h"
+#include <functional>
 
 Scene* Scene::Instance;
 
@@ -27,12 +28,11 @@ Scene::Scene(GLFWwindow* window) : networkClient(this)
 
 	physicsWorld->setGravity(btVector3(.0f, -9.81f, .0f));
 
-	//networkClient.Connect("127.0.0.1", 60000);
+	gContactAddedCallback = &Scene::ContactAddedCallback;
 }
 
 void Scene::Process()
 {
-	gui.Draw();
 	float dt = Time::Dt;
 
 	for (auto& go : objectList)
@@ -49,6 +49,8 @@ void Scene::Process()
 
 	for (auto& go : objectList)
 		go->InvokeRender(dt);
+
+	gui.Draw();
 }
 
 void Scene::ProcessFixedUpdate()
@@ -68,11 +70,33 @@ void Scene::ProcessNetworkUpdate()
 	networkClient.ProcessNetworkUpdate(Time::NetworkDt);
 }
 
+bool Scene::IsConnected() const
+{
+	return networkClient.IsConnected();
+}
+
+void Scene::ConnectToServer(const std::string& address, uint16_t port)
+{
+	std::cout << "Address = [" << address << "], Port = " << port << std::endl;
+	networkClient.Connect(address, port);
+}
+
 
 void Scene::RegisterPhysicsObject(btRigidBody* rigidBody)
 {
 	physicsObjectList.push_back(rigidBody);
 	physicsWorld->addRigidBody(rigidBody);
+}
+
+bool Scene::ContactAddedCallback(btManifoldPoint& contactPoint, const btCollisionObjectWrapper* object1, int id0, int index0, const btCollisionObjectWrapper* object2, int id1, int index1)
+{
+	GameObject* go1 = static_cast<GameObject*>(object1->getCollisionObject()->getUserPointer());
+	GameObject* go2 = static_cast<GameObject*>(object2->getCollisionObject()->getUserPointer());
+
+	go1->onCollision.Invoke(*go2);
+	go2->onCollision.Invoke(*go1);
+	
+	return false;
 }
 
 std::shared_ptr<GameObject> Scene::CreateObject(const std::string& name, const Vector3& position, const Quaternion& rotation, const Vector3& scale, std::shared_ptr<Transform> parent)

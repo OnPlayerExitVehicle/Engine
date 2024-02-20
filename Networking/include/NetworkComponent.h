@@ -17,7 +17,7 @@ protected:
 	
 
 	bool IsMine() const;
-	void SendNetworkMessage(olc::net::message<GameMessage>& msg);
+	void SendNetworkMessage(networking::message<GameMessage>& msg);
 public:
-	virtual void OnNetworkMessage(olc::net::message<GameMessage>& msg) = 0;
+	virtual void OnNetworkMessage(networking::message<GameMessage>& msg) = 0;
 };

@@ -4,8 +4,10 @@
 #include "Transform.h"
 #include "GUI.h"
 #include "TextureLoader.h"
+#include "Material.h"
 
 std::shared_ptr<Shader> MeshRenderer::defaultShader;
+std::shared_ptr<Shader> MeshRenderer::lightShader;
 
 std::shared_ptr<Shader> MeshRenderer::GetDefaultShader()
 {
@@ -20,27 +22,68 @@ std::shared_ptr<Shader> MeshRenderer::GetDefaultShader()
 	return defaultShader;
 }
 
+std::shared_ptr<Shader> MeshRenderer::GetLightShader()
+{
+	if (!lightShader)
+	{
+		lightShader = std::make_shared<Shader>();
+		lightShader->AttachShader(SHADERS_DIRECTORY"vertexLight.glsl", GL_VERTEX_SHADER);
+		lightShader->AttachShader(SHADERS_DIRECTORY"fragmentLight.glsl", GL_FRAGMENT_SHADER);
+		lightShader->Link();
+	}
+
+	return lightShader;
+}
+
 MeshRenderer::MeshRenderer() : 
 	mesh(MeshFactory::GetMesh(MeshType::Cube)), 
 	shader(GetDefaultShader()), 
-	color(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)),
 	textured(false)
 { }
 
-MeshRenderer::MeshRenderer(const glm::vec4& color) : 
+MeshRenderer::MeshRenderer(const glm::vec3& color, bool isLight) :
 	mesh(MeshFactory::GetMesh(MeshType::Cube)),
-	shader(GetDefaultShader()),
-	color(color),
-	textured(false)
-{ }
+	textured(false),
+	isLight(isLight),
+	material{ color }
+{ 
+	if (isLight)
+	{
+		shader = GetLightShader();
+	}
+	else
+	{
+		shader = GetDefaultShader();
+	}
+}
 
 MeshRenderer::MeshRenderer(std::shared_ptr<Texture> texture) :
 	mesh(MeshFactory::GetMesh(MeshType::Cube)),
 	texture(std::move(texture)),
 	shader(GetDefaultShader()),
-	color(glm::vec4(0.0f)),
 	textured(true)
 { }
+
+MeshRenderer::MeshRenderer(const glm::vec3& color, std::shared_ptr<Shader> shader) :
+	mesh(MeshFactory::GetMesh(MeshType::Cube)),
+	shader(std::move(shader)),
+	textured(false),
+	material{ color }
+{ }
+
+MeshRenderer::MeshRenderer(std::shared_ptr<Mesh> mesh, const glm::vec3& color) :
+	mesh(std::move(mesh)),
+	shader(GetDefaultShader()),
+	textured(false),
+	material{ color }
+{ }
+
+void MeshRenderer::SetColor(const Vector3& color)
+{
+	this->material.color = color;
+}
+
+Material& MeshRenderer::GetMaterial() { return material; }
 
 void MeshRenderer::Render()
 {
@@ -54,12 +97,11 @@ void MeshRenderer::Render()
 	{
 		texture->Bind();
 	}
-	else
-	{
-		shader->SendVector(UniformKey::Color, color);
-	}
+
 	shader->SendBool(UniformKey::IsTextured, textured);
 	shader->SendMatrix(UniformKey::TransformMatrix, transformMatrix);
+	shader->SendMaterial(material);
+
 	mesh->Draw();
 }
 
@@ -83,6 +125,16 @@ void MeshRenderer::OnGUI()
 
 	if (!textured)
 	{
-		ImGui::ColorEdit4("Color", &color[0]);
+		ImGui::ColorEdit3("Color", (float*) & material.color);
+	}
+
+	if(!isLight)
+	{
+		ImGui::Text("Material Properties");
+
+		ImGui::SliderFloat("Ambient", &material.ambient, .0f, 1.0f);
+		ImGui::SliderFloat("Diffuse", &material.diffuse, .0f, 1.0f);
+		ImGui::SliderFloat("Specular", &material.specular, .0f, 1.0f);
+		ImGui::SliderInt("Shininess", &material.shininess, 2, 50);
 	}
 }

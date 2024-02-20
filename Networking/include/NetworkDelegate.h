@@ -22,9 +22,9 @@ public:
 	void RegisterNetworkComponent(const std::shared_ptr<NetworkComponent>& component, GameMessage messageType);
 	bool IsMine() const;
 
-	void SendNetworkMessage(olc::net::message<GameMessage>& msg);
+	void SendNetworkMessage(networking::message<GameMessage>& msg);
 
-	void OnNetworkMessage(olc::net::message<GameMessage>& msg);
+	void OnNetworkMessage(networking::message<GameMessage>& msg);
 
 	void ProcessNetworkUpdate(float networkDeltaTime);
 

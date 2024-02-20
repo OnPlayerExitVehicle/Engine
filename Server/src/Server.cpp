@@ -2,54 +2,56 @@
 #include <iostream>
 #include <map>
 
-class NetworkServer : public olc::net::server_interface<GameMessage>
+using namespace networking;
+
+class NetworkServer : public server_interface<GameMessage>
 {
 public:
-	NetworkServer(uint16_t nPort) : olc::net::server_interface<GameMessage>(nPort) { }
+	NetworkServer(uint16_t nPort) : server_interface<GameMessage>(nPort) { }
 
 protected:
-	virtual bool OnClientConnectRequest(std::shared_ptr<olc::net::connection<GameMessage>> client) override
+	virtual bool OnClientConnectRequest(std::shared_ptr<connection<GameMessage>> client) override
 	{
 		return true;
 	}
 
-	virtual void OnClientConnected(std::shared_ptr<olc::net::connection<GameMessage>> client) override
+	virtual void OnClientConnected(std::shared_ptr<connection<GameMessage>> client) override
 	{
-		std::cout << "Size = " << gameObjects.size() << std::endl;
 		for (int i = 0; i < gameObjects.size(); i++)
 		{
-			olc::net::message<GameMessage> msg;
+			std::cout << "Sending" << std::endl;
+			message<GameMessage> msg;
 			msg.header.id = GameMessage::Spawn;
 			msg << gameObjects[i];
 			MessageClient(client, msg);
 		}
 	}
 
-	virtual void OnClientDisconnect(std::shared_ptr<olc::net::connection<GameMessage>> client, std::string reason) override
+	virtual void OnClientDisconnect(std::shared_ptr<connection<GameMessage>> client, std::string reason) override
 	{
 		uint32_t id = client->GetID();
 		std::cout << "Client Disconnected [" << id << "], Reason = " << reason << std::endl;
 
 		gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), id), gameObjects.end());
 
-		olc::net::message<GameMessage> msg;
+		message<GameMessage> msg;
 		msg.header.id = GameMessage::Despawn;
 		msg << id;
 
 		MessageAllClients(msg, client);
 	}
 
-	virtual void OnMessage(std::shared_ptr<olc::net::connection<GameMessage>> client, olc::net::message<GameMessage>& msg) override
+	virtual void OnMessage(std::shared_ptr<connection<GameMessage>> client, message<GameMessage>& msg) override
 	{
-		std::cout << static_cast<std::underlying_type_t<GameMessage>>(msg.header.id) << std::endl;
 		uint32_t id = client->GetID();
 		switch(msg.header.id) {
 			case GameMessage::Spawn: 
 				msg << id;
+				std::cout << std::format("[{}] Spawned new gameobject", id) << std::endl;
 				MessageAllClients(msg, client);
 				gameObjects.push_back(id);
 				break;
-			case GameMessage::TransformUpdate:
+			default:
 				msg << id;
 				MessageAllClients(msg, client);
 				break;
@@ -60,9 +62,21 @@ private:
 	std::vector<uint32_t> gameObjects;
 };
 
-int main()
+int main(int argc, char* argv[])
 {
-	NetworkServer server(60000);
+	uint16_t port;
+	if(argc > 1)
+	{
+		char** tmp;
+		port = (uint16_t)strtoul(argv[1], tmp, 10);
+		std::cout << "Starting the server from port = " << port << std::endl;
+	}
+	else
+	{
+		std::cout << "Port value must be given! Usage = server [port]" << std::endl;
+		return EXIT_FAILURE;
+	}
+	NetworkServer server(port);
 	server.Start();
 
 	while(true)

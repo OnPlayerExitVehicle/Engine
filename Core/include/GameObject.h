@@ -31,6 +31,8 @@ public:
 	std::shared_ptr<Transform> transform = nullptr;
 	std::string name;
 	bool lastlySelected = false;
+	
+	Event<void(const GameObject&)> onCollision;
 
 	template <typename T, typename... Types>
 	std::shared_ptr<T> AddComponent(Types... args)
@@ -81,7 +83,7 @@ public:
 	}
 
 	template <typename T>
-	bool HasComponent()
+	bool HasComponent() const
 	{
 		static_assert(std::is_base_of<Component, T>(), "Type parameter of the function must derive from Component class!");
 

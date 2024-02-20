@@ -15,6 +15,7 @@ private:
 	const float verticalFOV = 90.0f;
 
 	std::shared_ptr<Shader> defaultShader;
+	std::shared_ptr<Shader> lightShader;
 
 protected:
 	void BeforeRender() override;

@@ -27,5 +27,6 @@ public:
 	public:
 		glm::vec3 pos;
 		glm::vec2 tex;
+		glm::vec3 normal;
 	};
 };

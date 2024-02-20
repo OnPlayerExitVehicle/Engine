@@ -3,6 +3,7 @@
 #include "NetworkTransform.h"
 #include "Scene.h"
 #include "MeshRenderer.h"
+#include "NetworkColor.h"
 
 NetworkClient::NetworkClient(Scene* scene) : scene(scene) { }
 
@@ -19,9 +20,9 @@ bool NetworkClient::Connect(const std::string& host, const uint16_t port)
 			{
 				if(!Incoming().empty())
 				{
+					
 					auto msg = Incoming().pop_back().msg;
-
-					std::cout << "First Message Length = " << msg.size() << std::endl;
+					std::cout << (int)msg.header.id << std::endl;
 					uint32_t uid;
 					msg >> uid;
 
@@ -33,8 +34,6 @@ bool NetworkClient::Connect(const std::string& host, const uint16_t port)
 
 					if(networkObjectMap.contains(uid))
 					{
-						std::cout << "Contains" << std::endl;
-						std::cout << "Message Length = " << msg.size() << std::endl;
 						networkObjectMap[uid]->OnNetworkMessage(msg);
 					}
 				}
@@ -52,9 +51,10 @@ void NetworkClient::ProcessNetworkUpdate(float networkDeltaTime)
 		waitingForSpawn.pop_back();
 
 		auto go = scene->CreateObject(std::to_string(id));
-		go->AddComponent<MeshRenderer>(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+		go->AddComponent<MeshRenderer>();
 		auto delegate = go->AddComponent<NetworkDelegate>(this, id, false);
 		go->AddComponent<NetworkTransform>();
+		go->AddComponent<NetworkColor>();
 
 		networkObjectMap[id] = delegate;
 	}
@@ -70,11 +70,12 @@ void NetworkClient::SpawnLocalNetworkObject()
 	uint32_t id = GetID();
 
 	auto go = scene->CreateObject(std::to_string(id));
-	go->AddComponent<MeshRenderer>(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+	go->AddComponent<MeshRenderer>();
 	auto delegate = go->AddComponent<NetworkDelegate>(this, id, true);
 	go->AddComponent<NetworkTransform>();
+	go->AddComponent<NetworkColor>();
 
-	olc::net::message<GameMessage> msg;
+	networking::message<GameMessage> msg;
 	msg.header.id = GameMessage::Spawn;
 
 	Send(msg);

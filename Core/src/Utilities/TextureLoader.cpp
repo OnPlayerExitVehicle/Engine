@@ -11,7 +11,8 @@ std::shared_ptr<Texture> TextureLoader::LoadTexture(const std::string& path)
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_2D, id);
     int width, height, nrChannels;
-    stbi_uc* texture = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
+
+    stbi_uc* texture = stbi_load(path.c_str(), &width, &height, &nrChannels, STBI_rgb);
     if (texture == nullptr)
     {
         std::cout << "File cannot be loaded! Path = " << path << std::endl;

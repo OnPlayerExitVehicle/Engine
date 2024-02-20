@@ -2,6 +2,7 @@
 #include <functional>
 #include <memory>
 #include "Transform.h"
+#include "Utilities/Event.h"
 
 class GameObject;
 class GUI;

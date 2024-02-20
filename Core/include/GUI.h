@@ -20,6 +20,7 @@ private:
 	void DrawHierarchy();
 	void DrawSelectedObjectProps();
 	void DrawObjectCreator();
+	void DrawConnectDialog();
 
 	void DrawObject(std::shared_ptr<GameObject> object);
 
@@ -29,4 +30,6 @@ private:
 	std::shared_ptr<GameObject> lastSelected;
 
 	static std::string newObjectName;
+	static std::string address;
+	static std::string port;
 };

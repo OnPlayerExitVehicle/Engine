@@ -6,7 +6,7 @@
 
 class Scene;
 
-class NetworkClient : public olc::net::client_interface<GameMessage>
+class NetworkClient : public networking::client_interface<GameMessage>
 {
 private:
 	Scene* scene;

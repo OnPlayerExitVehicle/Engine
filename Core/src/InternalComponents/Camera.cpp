@@ -38,4 +38,15 @@ void Camera::BeforeRender()
 	defaultShader->Use();
 	defaultShader->SendMatrix(UniformKey::ViewMatrix, viewMatrix);
 	defaultShader->SendMatrix(UniformKey::ProjectionMatrix, projectionMatrix);
+	// Lighting
+	defaultShader->SendVector(UniformKey::ViewPosition, transform->position);
+
+	if (!lightShader)
+	{
+		lightShader = MeshRenderer::GetLightShader();
+	}
+	
+	lightShader->Use();
+	lightShader->SendMatrix(UniformKey::ViewMatrix, viewMatrix);
+	lightShader->SendMatrix(UniformKey::ProjectionMatrix, projectionMatrix);
 }

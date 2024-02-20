@@ -17,7 +17,7 @@ bool NetworkComponent::IsMine() const
 	return networkDelegate->IsMine();
 }
 
-void NetworkComponent::SendNetworkMessage(olc::net::message<GameMessage>& msg)
+void NetworkComponent::SendNetworkMessage(networking::message<GameMessage>& msg)
 {
 	networkDelegate->SendNetworkMessage(msg);
 }

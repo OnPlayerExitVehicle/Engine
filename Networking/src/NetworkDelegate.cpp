@@ -17,16 +17,15 @@ bool NetworkDelegate::IsMine() const
 	return isMine;
 }
 
-void NetworkDelegate::SendNetworkMessage(olc::net::message<GameMessage>& msg)
+void NetworkDelegate::SendNetworkMessage(networking::message<GameMessage>& msg)
 {
 	networkClient->Send(msg);
 }
 
-void NetworkDelegate::OnNetworkMessage(olc::net::message<GameMessage>& msg)
+void NetworkDelegate::OnNetworkMessage(networking::message<GameMessage>& msg)
 {
 	if(networkComponentMap.contains(msg.header.id))
 	{
-		std::cout << "Contains 2" << std::endl;
 		networkComponentMap[msg.header.id]->OnNetworkMessage(msg);
 	}
 }

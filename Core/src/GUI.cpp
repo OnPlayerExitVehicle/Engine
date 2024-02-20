@@ -7,8 +7,11 @@
 #include "PlaneCollider.h"
 #include "Camera.h"
 #include "Input.h"
+#include "MyComponent.h"
 
 std::string GUI::newObjectName;
+std::string GUI::address = "127.0.0.1";
+std::string GUI::port = "60000";
 
 void GUI::Init(GLFWwindow* window)
 {
@@ -26,7 +29,9 @@ void GUI::Draw()
     DrawHierarchy();
     if(lastSelected)
         DrawSelectedObjectProps();
+
     DrawObjectCreator();
+    DrawConnectDialog();
 
     FrameEnd();
  
@@ -62,7 +67,14 @@ void GUI::DrawSelectedObjectProps()
     }
     
     //ImGui::Text(std::format("Name = {}", lastSelected->name).c_str());
-    ImGui::SliderFloat3("Position", (float*)&lastSelected->transform->position, -10.0f, 10.0f);
+    if (ImGui::SliderFloat3("Position", (float*)&lastSelected->transform->position, -10.0f, 10.0f))
+    {
+        std::shared_ptr<Rigidbody> ptr;
+        if (lastSelected->TryGetComponent<Rigidbody>(ptr))
+        {
+            ptr->ActivatePhysics();
+        }
+    }
     ImGui::SliderFloat4("Rotation", (float*)&lastSelected->transform->rotation, -1.0f, 1.0f);
     ImGui::SliderFloat3("Scale", (float*)&lastSelected->transform->scale, 0.0f, 10.0f);
 
@@ -76,6 +88,11 @@ void GUI::DrawSelectedObjectProps()
         ImGui::EndTabBar();
     }
 
+    if(ImGui::Button("Add MyComponent"))
+    {
+	    lastSelected->AddComponent<MyComponent>();
+    }
+
     if (ImGui::Button("Add MeshRenderer"))
     {
         lastSelected->AddComponent<MeshRenderer>();
@@ -86,7 +103,7 @@ void GUI::DrawSelectedObjectProps()
         lastSelected->AddComponent<BoxCollider>();
     }
 
-    if (ImGui::Button("Add BoxCollider"))
+    if (ImGui::Button("Add PlaneCollider"))
     {
         lastSelected->AddComponent<PlaneCollider>();
     }
@@ -139,13 +156,71 @@ void GUI::DrawObjectCreator()
         }
         else
             scene->CreateObject("New Object");
-
-
     }
 
-    if(ImGui::Button("Spawn"))
+    if(ImGui::Button("Create Generic Cube"))
     {
-        Scene::Instance->networkClient.SpawnLocalNetworkObject();
+	    if(!newObjectName.empty())
+	    {
+		    auto go = scene->CreateObject(newObjectName);
+            go->AddComponent<MeshRenderer>(glm::vec4(1.0f, 0.0f, 0.0f, 0.0f));
+            go->AddComponent<BoxCollider>();
+            go->AddComponent<Rigidbody>(10.0f);
+
+            newObjectName = "";
+	    }
+        else
+        {
+	        auto go = scene->CreateObject("New Cube");
+            go->AddComponent<MeshRenderer>(glm::vec4(1.0f, 0.0f, 0.0f, 0.0f));
+            go->AddComponent<BoxCollider>();
+            go->AddComponent<Rigidbody>(10.0f);
+        }
+    }
+
+    ImGui::End();
+}
+
+void GUI::DrawConnectDialog()
+{
+    ImGui::Begin("Network");
+
+    Scene* scene = Scene::Instance;
+	if(!scene->IsConnected())
+    {
+	    const char* addr = address.c_str();
+        const char* prt = port.c_str();
+        char buff1[32];
+        char buff2[32];
+        std::strcpy(buff1, addr);
+        std::strcpy(buff2, prt);
+
+		if (ImGui::InputText("Address", buff1, 32))
+		{
+			address = buff1;
+		}
+
+        if (ImGui::InputText("Port", buff2, 32))
+		{
+			port = buff2;
+		}
+
+        if(ImGui::Button("Connect"))
+        {
+	        if(!address.empty() && !port.empty())
+	        {
+		        scene->ConnectToServer(address, atoi(port.c_str()));
+	        }
+        }
+
+        
+    }
+    else
+    {
+	    if(ImGui::Button("Spawn"))
+	    {
+	        Scene::Instance->networkClient.SpawnLocalNetworkObject();
+	    }
     }
 
     ImGui::End();
@@ -153,7 +228,7 @@ void GUI::DrawObjectCreator()
 
 void GUI::DrawObject(std::shared_ptr<GameObject> object)
 {
-    if (object->transform->childList.size() > 0)
+    if (!object->transform->childList.empty())
     {
         if (ImGui::TreeNodeEx(object->name.c_str()))
         {
