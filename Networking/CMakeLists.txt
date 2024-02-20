@@ -9,12 +9,7 @@ set(DEPENDENCY_DIR "../Dependencies")
 set(PROJECT_SOURCES_DIR "./src")
 set(PROJECT_LIBRARY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../lib")
 
-set(PROJECT_SOURCES
-	"${PROJECT_SOURCES_DIR}/NetworkDelegate.cpp"
-	"${PROJECT_SOURCES_DIR}/NetworkComponent.cpp"
-	"${PROJECT_SOURCES_DIR}/NetworkTransform.cpp"
-	"${PROJECT_SOURCES_DIR}/NetworkClient.cpp"
-)
+file(GLOB PROJECT_SOURCES ${PROJECT_SOURCES_DIR}/*.cpp)
 
 include_directories(
 	${PROJECT_INCLUDE_DIR} 
