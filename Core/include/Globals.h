@@ -7,7 +7,11 @@ constexpr int WINDOW_HEIGHT = 960;
 #define _STRING_R_ _STD_ string
 #define _STRING_CR_ const _STD_ string&
 #define DEBUG_LOG(str) _STD_ cout << str << _STD_ endl
-#define CORE_DIRECTORY "../../Core"
+#if WIN32
+    #define CORE_DIRECTORY "../../Core"
+#else
+    #define CORE_DIRECTORY "../Core"
+#endif
 
 ///
 #define TEXTURES_DIRECTORY CORE_DIRECTORY"/textures/"
