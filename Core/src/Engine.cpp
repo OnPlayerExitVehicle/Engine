@@ -10,7 +10,7 @@
 
 Engine::Engine(int windowWidth, int windowHeight)
 {
-	srand(NULL);
+	srand(time(NULL));
 	InitWindow(windowWidth, windowHeight);
 	InitGraphics();
 
