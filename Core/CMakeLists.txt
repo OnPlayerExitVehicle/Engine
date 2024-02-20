@@ -2,7 +2,6 @@
 
 project(Core)
 
-set(BUILD_SHARED_LIBS ON)
 add_subdirectory("../Dependencies/Bullet" "./Bullet" EXCLUDE_FROM_ALL)
 add_subdirectory("../Dependencies/GLM" "./GLM" EXCLUDE_FROM_ALL)
 add_subdirectory("../Dependencies/GLFW" "./GLFW" EXCLUDE_FROM_ALL)
@@ -31,7 +30,7 @@ add_executable(
 	${PROJECT_DEPENDENCY_DIR}/GLAD/glad.c
 )
 
-target_link_libraries(Engine BulletCollision BulletDynamics LinearMath glfw Networking)
+target_link_libraries(Engine LinearMath BulletCollision BulletDynamics LinearMath BulletCollision glfw Networking)
 if(WIN32)
 	set_property(TARGET Engine PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 	set_property(TARGET BulletCollision PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
