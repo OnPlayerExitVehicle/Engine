@@ -2,6 +2,7 @@
 
 project(Core)
 
+set(BUILD_SHARED_LIBS ON)
 add_subdirectory("../Dependencies/Bullet" "./Bullet" EXCLUDE_FROM_ALL)
 add_subdirectory("../Dependencies/GLM" "./GLM" EXCLUDE_FROM_ALL)
 add_subdirectory("../Dependencies/GLFW" "./GLFW" EXCLUDE_FROM_ALL)
@@ -31,7 +32,6 @@ add_executable(
 )
 
 target_link_libraries(Engine BulletCollision BulletDynamics LinearMath glfw Networking)
-set(BUILD_SHARED_LIBS ON)
 if(WIN32)
 	set_property(TARGET Engine PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 	set_property(TARGET BulletCollision PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
@@ -47,4 +47,6 @@ if(WIN32)
 		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:CONSOLE /ENTRY:mainCRTStartup")
 		set_target_properties(Engine PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG ${PROJECT_EXECUTABLE_DIR})
 	endif()
+else()
+	set_property(TARGET Engine PROPERTY RUNTIME_OUTPUT_DIRECTORY ${PROJECT_EXECUTABLE_DIR})
 endif()
