@@ -1,6 +1,6 @@
 #pragma once
 #include "GameObject.h"
-#include "bullet3-3.24/src/btBulletDynamicsCommon.h"
+#include "Bullet/src/btBulletDynamicsCommon.h"
 #include "BoxCollider.h"
 
 class Rigidbody : public Component

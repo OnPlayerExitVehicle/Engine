@@ -1,5 +1,5 @@
 #include "Mesh.h"
-#include "GLAD/glad.h"
+#include "glad/glad.h"
 #include <iostream>
 
 Mesh::Mesh(const std::vector<MeshFactory::TexturedVertex>& vertexVector, const std::vector<unsigned int>& indexVector)

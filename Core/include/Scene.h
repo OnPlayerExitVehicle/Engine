@@ -3,7 +3,7 @@
 
 #include "GameObject.h"
 #include "Singleton.h"
-#include "bullet3-3.24/src/btBulletDynamicsCommon.h"
+#include "Bullet/src/btBulletDynamicsCommon.h"
 #include "GUI.h"
 #include "NetworkClient.h"
 

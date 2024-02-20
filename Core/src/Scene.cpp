@@ -11,14 +11,8 @@ Scene* Scene::Instance;
 Scene::Scene(GLFWwindow* window) : networkClient(this)
 {
 	gui.Init(window);
-	if (Instance == nullptr)
-	{
-		Instance = this;
-	}
-	else
-	{
-		throw std::exception("Singleton failed! On class: \"Scene\"");
-	}
+	assert(Instance == nullptr);
+	Instance = this;
 
 	physicsCollisionConfig = new btDefaultCollisionConfiguration();
 	physicsDispatcher	   = new btCollisionDispatcher(physicsCollisionConfig);

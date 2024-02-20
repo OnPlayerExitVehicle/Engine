@@ -31,7 +31,7 @@ void Engine::InitWindow(int windowWidth, int windowHeight)
 	glfwInit();
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 	window = glfwCreateWindow(windowWidth, windowHeight, std::format("Engine ({} bit)", sizeof(void*) * 8).c_str(), nullptr, nullptr);
-	if (window == nullptr) throw std::exception("Cannot create window!");
+	assert(window);
 }
 
 void Engine::InitGraphics()

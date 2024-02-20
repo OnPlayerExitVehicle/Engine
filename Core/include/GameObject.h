@@ -66,7 +66,7 @@ public:
 	}
 
 	template <typename T>
-	bool TryGetComponent(_Out_ std::shared_ptr<T>& ptr)
+	bool TryGetComponent(std::shared_ptr<T>& ptr)
 	{
 		static_assert(std::is_base_of<Component, T>(), "Type parameter of the function must derive from Component class!");
 

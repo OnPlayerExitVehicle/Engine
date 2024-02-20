@@ -9,12 +9,17 @@ set(DEPENDENCY_DIR "../Dependencies")
 set(PROJECT_SOURCES_DIR "./src")
 set(PROJECT_LIBRARY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../lib")
 
-set(PROJECT_SOURCES
-	"${PROJECT_SOURCES_DIR}/NetworkDelegate.cpp"
-	"${PROJECT_SOURCES_DIR}/NetworkComponent.cpp"
-	"${PROJECT_SOURCES_DIR}/NetworkTransform.cpp"
-)
+file(GLOB PROJECT_SOURCES ${PROJECT_SOURCES_DIR}/*.cpp)
 
-include_directories(${PROJECT_INCLUDE_DIR} ${CORE_INCLUDE_DIR} ${DEPENDENCY_DIR})
+include_directories(
+	${PROJECT_INCLUDE_DIR} 
+	${CORE_INCLUDE_DIR} 
+	${DEPENDENCY_DIR} 
+	${DEPENDENCY_DIR}/GLAD
+	${DEPENDENCY_DIR}/IMGUI
+	${DEPENDENCY_DIR}/GLFW
+	${CORE_INCLUDE_DIR}/InternalComponents
+	${CORE_INCLUDE_DIR}/Utilities
+)
 add_library(Networking STATIC ${PROJECT_SOURCES})
 set_target_properties(Networking PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_LIBRARY_DIR})

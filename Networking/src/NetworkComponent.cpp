@@ -4,10 +4,7 @@
 
 void NetworkComponent::Awake()
 {
-	if (!GetGameObject()->TryGetComponent<NetworkDelegate>(networkDelegate))
-	{
-		throw std::exception("No network delegate!");
-	}
+	assert(GetGameObject()->TryGetComponent<NetworkDelegate>(networkDelegate));
 }
 
 void NetworkComponent::NetworkUpdate(float networkDeltaTime) { }

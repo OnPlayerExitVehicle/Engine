@@ -410,5 +410,6 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 
-[Dd]ependencies/
+#[Dd]ependencies/
 [Oo]ut/
+[Bb]uild/
