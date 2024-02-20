@@ -22,7 +22,7 @@ file(GLOB_RECURSE PROJECT_SOURCES ${PROJECT_SOURCES_DIR}/*.cpp)
 file(GLOB IMGUI_SOURCES ${IMGUI_DIR}/*.cpp)
 
 add_executable(
-	Engine 
+	Engine
 	${PROJECT_SOURCES}
 	${IMGUI_SOURCES}
 	${IMGUI_DIR}/backends/imgui_impl_glfw.cpp 
@@ -31,7 +31,7 @@ add_executable(
 )
 
 target_link_libraries(Engine BulletCollision BulletDynamics LinearMath glfw Networking)
-
+set(BUILD_SHARED_LIBS ON)
 if(WIN32)
 	set_property(TARGET Engine PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 	set_property(TARGET BulletCollision PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
@@ -39,9 +39,10 @@ if(WIN32)
 	set_property(TARGET LinearMath PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 	set_property(TARGET glfw PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 	set_property(TARGET Networking PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:CONSOLE /ENTRY:WinMainCRTStartup")
-else()
-	set(BUILD_SHARED_LIBS ON)
+	#set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:CONSOLE /ENTRY:_mainCRTStartup")
+
+	
 endif()
+
 
 set_target_properties(Engine PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_EXECUTABLE_DIR})
