@@ -3,6 +3,7 @@
 #include "Globals.h"
 #include <unordered_map>
 #include <functional>
+#include <memory>
 
 class Mesh;
 

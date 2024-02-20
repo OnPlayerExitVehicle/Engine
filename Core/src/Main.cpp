@@ -3,20 +3,23 @@
 #include "Globals.h"
 #include "Engine.h"
 
+#if WIN32
 int WinMain(
-  _In_ HINSTANCE hInstance,
-  _In_ HINSTANCE hPrevInstance,
-  _In_ LPSTR     lpCmdLine,
-  _In_ int       nShowCmd
+  HINSTANCE hInstance,
+  HINSTANCE hPrevInstance,
+  LPSTR     lpCmdLine,
+  int       nShowCmd
 )
 {
 	std::cout << "WinMains" << std::endl;
 	Engine engine(WINDOW_WIDTH, WINDOW_HEIGHT);
 	engine.EngineLoop();
 }
+#endif
 
 int main()
 {
+	assert(-1);
 	std::cout << "mains" << std::endl;
 	Engine engine(WINDOW_WIDTH, WINDOW_HEIGHT);
 	engine.EngineLoop();

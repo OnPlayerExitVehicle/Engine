@@ -1,4 +1,4 @@
-#include "GLAD/glad.h"
+#include "glad/glad.h"
 #include "Input.h"
 #include <iostream>
 #include "Globals.h"
