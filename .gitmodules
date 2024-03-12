@@ -13,3 +13,6 @@
 [submodule "Dependencies/STB"]
 	path = Dependencies/STB
 	url = https://github.com/nothings/stb.git
+[submodule "Dependencies/Sheila"]
+	path = Dependencies/Sheila
+	url = https://github.com/OnPlayerExitVehicle/Sheila
