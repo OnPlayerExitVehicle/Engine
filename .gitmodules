@@ -4,9 +4,6 @@
 [submodule "Dependencies/GLM"]
 	path = Dependencies/GLM
 	url = https://github.com/g-truc/glm.git
-[submodule "Dependencies/ASIO"]
-	path = Dependencies/ASIO
-	url = https://github.com/chriskohlhoff/asio.git
 [submodule "Dependencies/IMGUI"]
 	path = Dependencies/IMGUI
 	url = https://github.com/ocornut/imgui.git
