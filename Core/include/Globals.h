@@ -13,7 +13,7 @@ inline int WINDOW_HEIGHT = DEFAULT_WINDOW_HEIGHT;
 #define DEBUG_FORMAT(str, ...) _STD_ cout << _STD_ format(str, __VA_ARGS__) << _STD_ endl
 
 #if WIN32
-	#define CORE_DIRECTORY "../../Core"
+	#define CORE_DIRECTORY "../Core"
 #else
 	#define CORE_DIRECTORY "../Core"
 #endif
