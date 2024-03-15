@@ -416,3 +416,4 @@ _deps
 [Cc]make-build-debug/
 [Cc]make-build-release/
 .idea/
+Core/icons/app.o
