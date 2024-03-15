@@ -26,11 +26,10 @@ void NetworkColor::NetworkUpdate(float networkDeltaTime)
 			g = currentColor.g;
 			b = currentColor.b;
 
-			networking::message<GameMessage> msg;
-			msg.header.id = GameMessage::ColorUpdate;
+			networking::message msg;
 			msg << r << g << b;
 
-			SendNetworkMessage(msg);
+			SendNetworkMessage(GameMessage::ColorUpdate, std::move(msg));
 		}
 	}
 	else
@@ -41,7 +40,7 @@ void NetworkColor::NetworkUpdate(float networkDeltaTime)
 	}
 }
 
-void NetworkColor::OnNetworkMessage(networking::message<GameMessage>& msg)
+void NetworkColor::OnNetworkMessage(networking::message&& msg)
 {
 	msg >> b >> g >> r;
 }

@@ -1,7 +1,9 @@
 #pragma once
 
 #include "Component.h"
-#include "olc_net.h"
+#include "message.h"
+
+enum class GameMessage : unsigned char;
 
 class NetworkDelegate;
 
@@ -17,7 +19,7 @@ protected:
 	
 
 	bool IsMine() const;
-	void SendNetworkMessage(networking::message<GameMessage>& msg);
+	void SendNetworkMessage(GameMessage flag, networking::message&& msg);
 public:
-	virtual void OnNetworkMessage(networking::message<GameMessage>& msg) = 0;
+	virtual void OnNetworkMessage(networking::message&& msg) = 0;
 };

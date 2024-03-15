@@ -11,7 +11,7 @@
 
 std::string GUI::newObjectName;
 std::string GUI::address = "127.0.0.1";
-std::string GUI::port = "60000";
+std::string GUI::port = "3390";
 
 void GUI::Init(GLFWwindow* window)
 {

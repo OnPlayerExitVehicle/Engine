@@ -14,7 +14,7 @@ bool NetworkComponent::IsMine() const
 	return networkDelegate->IsMine();
 }
 
-void NetworkComponent::SendNetworkMessage(networking::message<GameMessage>& msg)
+void NetworkComponent::SendNetworkMessage(GameMessage flag, networking::message&& msg)
 {
-	networkDelegate->SendNetworkMessage(msg);
+	networkDelegate->SendNetworkMessage(flag, std::move(msg));
 }

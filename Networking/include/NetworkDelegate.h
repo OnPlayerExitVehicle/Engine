@@ -11,20 +11,20 @@ class NetworkDelegate : public Component
 private:
 	std::map<GameMessage, std::shared_ptr<NetworkComponent>> networkComponentMap;
 	NetworkClient* networkClient;
-	uint32_t uid;
+	uint16_t uid;
 	bool isMine;
 
 protected:
 	void Awake() override;
 
 public:
-	explicit NetworkDelegate(NetworkClient* client, uint32_t uid, bool local);
+	explicit NetworkDelegate(NetworkClient* client, uint16_t uid, bool local);
 	void RegisterNetworkComponent(const std::shared_ptr<NetworkComponent>& component, GameMessage messageType);
 	bool IsMine() const;
 
-	void SendNetworkMessage(networking::message<GameMessage>& msg);
+	void SendNetworkMessage(GameMessage flag, networking::message&& msg);
 
-	void OnNetworkMessage(networking::message<GameMessage>& msg);
+	void OnNetworkMessage(GameMessage flag, networking::message&& msg);
 
 	void ProcessNetworkUpdate(float networkDeltaTime);
 

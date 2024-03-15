@@ -5,49 +5,60 @@
 #include "MeshRenderer.h"
 #include "NetworkColor.h"
 
-NetworkClient::NetworkClient(Scene* scene) : scene(scene) { }
+NetworkClient::NetworkClient(Scene* scene) : scene(scene), client(rand() % 65536) { }
 
 bool NetworkClient::Connect(const std::string& host, const uint16_t port)
 {
-	const bool result = client_interface::Connect(host, port);
+	sheilaThread = client.Start(host, port);
+    isConnected = true;
 
-	if (!result) return false;
-
+    networking::tsqueue<networking::owned_message>& message_queue = client.message_queue;
 	networkLoopThread = std::thread(
-		[this]()
+		[this, &message_queue]()
 		{
-			while(IsConnected())
-			{
-				if(!Incoming().empty())
-				{
-					
-					auto msg = Incoming().pop_back().msg;
-					std::cout << (int)msg.header.id << std::endl;
-					uint32_t uid;
-					msg >> uid;
+            while(isConnected)
+            {
+                message_queue.Wait();
+                while(!message_queue.Empty())
+                {
+                    networking::owned_message msg = message_queue.Dequeue();
 
-					if(msg.header.id == GameMessage::Spawn)
-					{
-						waitingForSpawn.push_back(uid);
-						continue;
-					}
+                    uint8_t flag_raw;
+                    msg.msg >> flag_raw;
 
-					if(networkObjectMap.contains(uid))
-					{
-						networkObjectMap[uid]->OnNetworkMessage(msg);
-					}
-				}
-			}
-		});
+                    GameMessage flag = (GameMessage)flag_raw;
+
+                    std::cout << "Got flag = " << (int)flag_raw << std::endl;
+
+                    if(flag == GameMessage::Spawn)
+                    {
+                        waitingForSpawn.push_back(msg.peer_id);
+                        continue;
+                    }
+
+                    if(networkObjectMap.contains(msg.peer_id))
+                    {
+                        networkObjectMap[msg.peer_id]->OnNetworkMessage(flag, std::move(msg.msg));
+                    }
+                }
+            }
+		}
+	);
 
 	return true;
+}
+
+void NetworkClient::Send(GameMessage flag, networking::message&& msg)
+{
+    msg << (uint8_t) flag;
+    client.SendToAll(std::make_shared<networking::message>(std::move(msg)));
 }
 
 void NetworkClient::ProcessNetworkUpdate(float networkDeltaTime)
 {
 	while(!waitingForSpawn.empty())
 	{
-		uint32_t id = waitingForSpawn.back();
+		uint16_t id = waitingForSpawn.back();
 		waitingForSpawn.pop_back();
 
 		auto go = scene->CreateObject(std::to_string(id));
@@ -66,8 +77,7 @@ void NetworkClient::ProcessNetworkUpdate(float networkDeltaTime)
 
 void NetworkClient::SpawnLocalNetworkObject()
 {
-	if (!IsConnected()) return;
-	uint32_t id = GetID();
+	uint16_t id = 0;
 
 	auto go = scene->CreateObject(std::to_string(id));
 	go->AddComponent<MeshRenderer>();
@@ -75,9 +85,14 @@ void NetworkClient::SpawnLocalNetworkObject()
 	go->AddComponent<NetworkTransform>();
 	go->AddComponent<NetworkColor>();
 
-	networking::message<GameMessage> msg;
-	msg.header.id = GameMessage::Spawn;
+    std::shared_ptr<networking::message> msg = std::make_shared<networking::message>();
+    *msg << (uint8_t) GameMessage::Spawn;
 
-	Send(msg);
+	client.SendToAll(msg);
 	networkObjectMap[id] = delegate;
+}
+
+bool NetworkClient::IsConnected() const
+{
+    return isConnected;
 }

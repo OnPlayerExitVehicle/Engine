@@ -13,7 +13,7 @@ private:
 protected:
 	void Awake() override;
 	void NetworkUpdate(float networkDeltaTime) override;
-	void OnNetworkMessage(networking::message<GameMessage>& msg) override;
+	void OnNetworkMessage(networking::message&& msg) override;
 
 	std::string GetName() override { return typeid(*this).name(); }
 };

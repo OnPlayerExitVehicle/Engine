@@ -1,4 +1,4 @@
-enum class GameMessage
+enum class GameMessage : unsigned char
 {
 	ServerAccept,
 	Spawn,

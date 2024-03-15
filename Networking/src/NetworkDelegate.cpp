@@ -5,7 +5,7 @@ void NetworkDelegate::Awake()
 	
 }
 
-NetworkDelegate::NetworkDelegate(NetworkClient* client, uint32_t id, bool local) : uid(id), isMine(local), networkClient(client) { }
+NetworkDelegate::NetworkDelegate(NetworkClient* client, uint16_t id, bool local) : uid(id), isMine(local), networkClient(client) { }
 
 void NetworkDelegate::RegisterNetworkComponent(const std::shared_ptr<NetworkComponent>& component, GameMessage messageType)
 {
@@ -17,16 +17,16 @@ bool NetworkDelegate::IsMine() const
 	return isMine;
 }
 
-void NetworkDelegate::SendNetworkMessage(networking::message<GameMessage>& msg)
+void NetworkDelegate::SendNetworkMessage(GameMessage flag, networking::message&& msg)
 {
-	networkClient->Send(msg);
+	networkClient->Send(flag, std::move(msg));
 }
 
-void NetworkDelegate::OnNetworkMessage(networking::message<GameMessage>& msg)
+void NetworkDelegate::OnNetworkMessage(GameMessage flag, networking::message&& msg)
 {
-	if(networkComponentMap.contains(msg.header.id))
+	if(networkComponentMap.contains(flag))
 	{
-		networkComponentMap[msg.header.id]->OnNetworkMessage(msg);
+		networkComponentMap[flag]->OnNetworkMessage(std::move(msg));
 	}
 }
 

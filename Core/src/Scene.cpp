@@ -72,7 +72,7 @@ bool Scene::IsConnected() const
 void Scene::ConnectToServer(const std::string& address, uint16_t port)
 {
 	std::cout << "Address = [" << address << "], Port = " << port << std::endl;
-	networkClient.Connect(address, port);
+	(void)networkClient.Connect(address, port);
 }
 
 

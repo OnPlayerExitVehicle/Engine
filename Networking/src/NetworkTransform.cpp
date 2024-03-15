@@ -25,11 +25,10 @@ void NetworkTransform::NetworkUpdate(float networkDeltaTime)
 			y = currentPosition.y;
 			z = currentPosition.z;
 
-			networking::message<GameMessage> msg;
-			msg.header.id = GameMessage::TransformUpdate;
+			networking::message msg;
 			msg << x << y << z;
 
-			SendNetworkMessage(msg);
+			SendNetworkMessage(GameMessage::TransformUpdate, std::move(msg));
 		}
 	}
 	else
@@ -40,7 +39,7 @@ void NetworkTransform::NetworkUpdate(float networkDeltaTime)
 	}
 }
 
-void NetworkTransform::OnNetworkMessage(networking::message<GameMessage>& msg)
+void NetworkTransform::OnNetworkMessage(networking::message&& msg)
 {
 	msg >> z >> y >> x;
 }
