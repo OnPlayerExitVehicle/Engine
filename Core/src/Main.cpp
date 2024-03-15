@@ -19,7 +19,6 @@ int WinMain(
 
 int main()
 {
-	assert(-1);
 	std::cout << "mains" << std::endl;
 	Engine engine(WINDOW_WIDTH, WINDOW_HEIGHT);
 	engine.EngineLoop();

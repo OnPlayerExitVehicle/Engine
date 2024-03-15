@@ -28,11 +28,21 @@ Engine::Engine(int windowWidth, int windowHeight)
 
 void Engine::InitWindow(int windowWidth, int windowHeight)
 {
+#ifdef NDEBUG
+    glfwInit();
+#else
 	assert(glfwInit());
+#endif
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 	window = glfwCreateWindow(windowWidth, windowHeight, std::format("Engine ({} bit)", sizeof(void*) * 8).c_str(), nullptr, nullptr);
 	assert(window);
 }
+
+//void APIENTRY debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
+//{
+//    if(id != 131185)
+//        std::cout << std::format("Debug callback = [source={}][type={}][id={}][message={}]", source, type, id, message) << std::endl;
+//}
 
 void Engine::InitGraphics()
 {
@@ -41,6 +51,8 @@ void Engine::InitGraphics()
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
+    //glEnable(GL_DEBUG_OUTPUT);
+    //glDebugMessageCallback(debug_callback, nullptr);
 }
 
 void Engine::InitDefaultBehaviour()
@@ -80,13 +92,11 @@ void Engine::InitDefaultBehaviour()
 
 void Engine::EngineLoop()
 {
-	while (!glfwWindowShouldClose(window))
-	{
-		Time::FrameStart();
-
-		glfwPollEvents();
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		scene->Process();
-		glfwSwapBuffers(window);
-	}
+    while (!glfwWindowShouldClose(window)) {
+        Time::FrameStart();
+        glfwPollEvents();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        scene->Process();
+        glfwSwapBuffers(window);
+    }
 }
