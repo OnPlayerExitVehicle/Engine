@@ -1,5 +1,5 @@
 # Engine
-This project is a multiplayer based game engine i started 1 year ago for my graduation thesis. Now i am graduated but still updating the engine. Contributions are accepted. Also you can reach to me for anything from my mail address [alinazifkoca@gmail.com](mailto:alinazifkoca@gmail.com)
+Engine is a multiplayer based game engine i started 1 year ago for my graduation thesis. Now i am graduated but still updating the engine. Contributions are accepted. Also you can reach to me for anything from my mail address [alinazifkoca@gmail.com](mailto:alinazifkoca@gmail.com)
 
 # Dependencies
 
