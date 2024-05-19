@@ -1,6 +1,6 @@
 #include "MeshRenderer.h"
 #include "MeshFactory.h"
-#include <glad/glad.h>
+#include <GLAD/glad.h>
 #include "Transform.h"
 #include "GUI.h"
 #include "TextureLoader.h"

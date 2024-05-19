@@ -7,9 +7,6 @@
 [submodule "Dependencies/IMGUI"]
 	path = Dependencies/IMGUI
 	url = https://github.com/ocornut/imgui.git
-[submodule "Dependencies/GLFW"]
-	path = Dependencies/GLFW
-	url = https://github.com/glfw/glfw.git
 [submodule "Dependencies/STB"]
 	path = Dependencies/STB
 	url = https://github.com/nothings/stb.git

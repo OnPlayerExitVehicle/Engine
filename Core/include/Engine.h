@@ -1,13 +1,13 @@
 #pragma once
 #include "Scene.h"
 #include <string>
-#include "GLFW/include/GLFW/glfw3.h"
 #include <thread>
+#include "Window.h"
 
 class Engine
 {
 private:
-	GLFWwindow* window;
+	Window window;
 	Scene* scene;
 	std::thread loopThread;
 

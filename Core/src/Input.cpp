@@ -1,4 +1,3 @@
-#include "glad/glad.h"
 #include "Input.h"
 #include <iostream>
 #include "Globals.h"
@@ -6,9 +5,9 @@
 
 bool Input::inputThisFrame;
 
-GLFWwindow* Input::window;
+Window* Input::window;
 
-void Input::Initialize(GLFWwindow* _window)
+void Input::Initialize(Window* _window)
 {
 	window = _window;
 	//glfwSetKeyCallback(_window, OnKeyPressedCallback);
@@ -16,11 +15,11 @@ void Input::Initialize(GLFWwindow* _window)
 
 int monitorIndex = 0;
 
-void Input::OnKeyPressedCallback(GLFWwindow* _window, int key, int scancode, int action, int mods)
+void Input::OnKeyPressedCallback(KeyCode key, KeyAction action)
 {
-	if (key == GLFW_KEY_F10 && action == GLFW_PRESS)
+	if (key == KeyCode::F10 && action == KeyAction::Press)
 	{
-		int monitorCount;
+		/*int monitorCount;
 		GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
 		GLFWmonitor* useMonitor = nullptr;
 		int xPos = 50, yPos = 50, width, height;
@@ -39,10 +38,9 @@ void Input::OnKeyPressedCallback(GLFWwindow* _window, int key, int scancode, int
 		WINDOW_WIDTH = width;
 		WINDOW_HEIGHT = height;
 		glViewport(xPos, yPos, width, height);
-		glfwSetWindowMonitor(_window, useMonitor, xPos, yPos, width, height, GLFW_DONT_CARE);
-		/*glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);*/
+		glfwSetWindowMonitor(_window, useMonitor, xPos, yPos, width, height, GLFW_DONT_CARE);*/
 	}
-	else if(key == GLFW_KEY_R && action == GLFW_PRESS)
+	else if(key == KeyCode::R && action == KeyAction::Press)
 	{
 		std::cout << "Recompiling shaders" << std::endl;
 		MeshRenderer::GetDefaultShader()->Recompile();
@@ -52,17 +50,17 @@ void Input::OnKeyPressedCallback(GLFWwindow* _window, int key, int scancode, int
 
 bool Input::GetKeyDown(KeyCode key)
 {
-	return false; //?
+	return window->GetKeyDown(key) && !inputThisFrame;
 }
 
 bool Input::GetKey(KeyCode key)
 {
-	return (glfwGetKey(window, (int)key) == GLFW_PRESS) && !inputThisFrame;
+	return window->GetKey(key) && !inputThisFrame;
 }
 
 bool Input::GetKeyUp(KeyCode key)
 {
-	return (glfwGetKey(window, (int)key) == GLFW_RELEASE) && !inputThisFrame;
+	return window->GetKeyUp(key) && !inputThisFrame;
 }
 
 void Input::ResetInputThisFrame()

@@ -13,10 +13,10 @@ std::string GUI::newObjectName;
 std::string GUI::address = "127.0.0.1";
 std::string GUI::port = "3390";
 
-void GUI::Init(GLFWwindow* window)
+void GUI::Init(HWND hWnd)
 {
     ImGui::CreateContext();
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplWin32_Init(hWnd);
     ImGui_ImplOpenGL3_Init("#version 130");
     ImGui::StyleColorsDark();
 }
@@ -273,7 +273,7 @@ void GUI::DrawObject(std::shared_ptr<GameObject> object)
 void GUI::FrameStart()
 {
     ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
+    ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
 }
 

@@ -8,9 +8,9 @@
 
 Scene* Scene::Instance;
 
-Scene::Scene(GLFWwindow* window) : networkClient(this)
+Scene::Scene(Window* window) : networkClient(this)
 {
-	gui.Init(window);
+	gui.Init((HWND)window->GetNativeHandle());
 	assert(Instance == nullptr);
 	Instance = this;
 

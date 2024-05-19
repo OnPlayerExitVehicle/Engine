@@ -6,6 +6,7 @@
 #include "Bullet/src/btBulletDynamicsCommon.h"
 #include "GUI.h"
 #include "NetworkClient.h"
+#include "Window.h"
 
 class Rigidbody;
 
@@ -14,7 +15,7 @@ class Scene
 public:
 	static Scene* Instance;
 
-	Scene(GLFWwindow* window);
+	Scene(Window* window);
 	void Process();
 	void ProcessFixedUpdate();
 

@@ -1,5 +1,5 @@
 #include "Texture.h"
-#include <glad/glad.h>
+#include <GLAD/glad.h>
 
 Texture::Texture(unsigned int id) : id(id) { }
 

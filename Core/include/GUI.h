@@ -1,19 +1,19 @@
 #pragma once
-#include <glad/glad.h>
-//#include "GLFW/include/GLFW/glfw3.h"
+#include <GLAD/glad.h>
 
 #include "imgui.h"
-#include "IMGUI/backends/imgui_impl_glfw.h"
+#include "IMGUI/backends/imgui_impl_win32.h"
 #include "IMGUI/backends/imgui_impl_opengl3.h"
 #include <memory>
 #include <string>
+#include <windef.h>
 
 class GameObject;
 
 class GUI
 {
 public:
-	void Init(GLFWwindow* window);
+	void Init(HWND hWindow);
 	void Draw();
 
 private:

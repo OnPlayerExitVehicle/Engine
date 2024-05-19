@@ -1,5 +1,5 @@
 #include "Shader.h"
-#include "glad/glad.h"
+#include <GLAD/glad.h>
 #include "FileReader.h"
 #include <iostream>
 #include "Material.h"

@@ -14,9 +14,9 @@ Engine::Engine(int windowWidth, int windowHeight)
 	InitWindow(windowWidth, windowHeight);
 	InitGraphics();
 
-	scene = new Scene(window);
-	Input::Initialize(window);
-	glfwSetKeyCallback(window, Input::OnKeyPressedCallback);
+	scene = new Scene(&window);
+	Input::Initialize(&window);
+	window.SetKeyCallback(Input::OnKeyPressedCallback);
 
 	InitDefaultBehaviour();
 
@@ -28,14 +28,7 @@ Engine::Engine(int windowWidth, int windowHeight)
 
 void Engine::InitWindow(int windowWidth, int windowHeight)
 {
-#ifdef NDEBUG
-    glfwInit();
-#else
-	assert(glfwInit());
-#endif
-	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-	window = glfwCreateWindow(windowWidth, windowHeight, std::format("Engine ({} bit)", sizeof(void*) * 8).c_str(), nullptr, nullptr);
-	assert(window);
+	window.Create(windowWidth, windowHeight, std::format("Engine ({} bit)", sizeof(void*) * 8));
 }
 
 //void APIENTRY debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
@@ -46,13 +39,12 @@ void Engine::InitWindow(int windowWidth, int windowHeight)
 
 void Engine::InitGraphics()
 {
-	glfwMakeContextCurrent(window);
-	(void)gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
+	window.InitializeGraphicsContext();
+	gladLoadGL();
+	//(void)gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
-    //glEnable(GL_DEBUG_OUTPUT);
-    //glDebugMessageCallback(debug_callback, nullptr);
 }
 
 void Engine::InitDefaultBehaviour()
@@ -92,11 +84,9 @@ void Engine::InitDefaultBehaviour()
 
 void Engine::EngineLoop()
 {
-    while (!glfwWindowShouldClose(window)) {
+    while (window.ProcessLoop()) {
         Time::FrameStart();
-        glfwPollEvents();
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         scene->Process();
-        glfwSwapBuffers(window);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 }

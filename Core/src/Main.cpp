@@ -11,7 +11,7 @@ int WinMain(
   int       nShowCmd
 )
 {
-	std::cout << "WinMains" << std::endl;
+	std::cout << "WinMain" << std::endl;
 	Engine engine(WINDOW_WIDTH, WINDOW_HEIGHT);
 	engine.EngineLoop();
 }
@@ -19,7 +19,7 @@ int WinMain(
 
 int main()
 {
-	std::cout << "mains" << std::endl;
+	std::cout << "main" << std::endl;
 	Engine engine(WINDOW_WIDTH, WINDOW_HEIGHT);
 	engine.EngineLoop();
 }
