@@ -28,8 +28,6 @@ bool NetworkClient::Connect(const std::string& host, const uint16_t port)
 
                     GameMessage flag = (GameMessage)flag_raw;
 
-                    std::cout << "Got flag = " << (int)flag_raw << std::endl;
-
                     if(flag == GameMessage::Spawn)
                     {
                         waitingForSpawn.push_back(msg.peer_id);
