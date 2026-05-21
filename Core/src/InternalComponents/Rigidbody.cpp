@@ -135,3 +135,8 @@ void Rigidbody::ApplyPushImpulse(const Vector3& impulse, const Vector3& relative
 	ActivatePhysics();
 	physicsRigidbody->applyPushImpulse(impulse, relativePosition);
 }
+
+btRigidBody* Rigidbody::GetRigidbody() const noexcept
+{
+	return physicsRigidbody;
+}

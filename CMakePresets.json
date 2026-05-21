@@ -26,16 +26,22 @@
                 "strategy": "external"
             },
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
-            }
+              "CMAKE_BUILD_TYPE": "Debug"
+            },
+            "buildCommandArgs": [
+              "/MP"
+            ]
         },
         {
-            "name": "x64-release",
-            "displayName": "x64 Release",
-            "inherits": "x64-debug",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release"
-            }
+          "name": "x64-release",
+          "displayName": "x64 Release",
+          "inherits": "x64-debug",
+          "cacheVariables": {
+            "CMAKE_BUILD_TYPE": "Release"
+          },
+          "buildCommandArgs": [
+            "/MP"
+          ]
         },
         {
             "name": "x86-debug",

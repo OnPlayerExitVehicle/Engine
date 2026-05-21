@@ -10,9 +10,9 @@
 class MeshRenderer : public Component
 {
 private:
-	std::shared_ptr<Mesh>	 mesh;
-	std::shared_ptr<Texture> texture;
-	std::shared_ptr<Shader>  shader;
+	std::vector<std::shared_ptr<Mesh>>		meshes;
+	std::vector<std::shared_ptr<Texture>>	textures;
+	std::shared_ptr<Shader>					shader;
 
 	static std::shared_ptr<Shader> defaultShader;
 	static std::shared_ptr<Shader> lightShader;
@@ -28,12 +28,14 @@ public:
 
 	static std::shared_ptr<Shader> GetDefaultShader();
 	static std::shared_ptr<Shader> GetLightShader();
-	MeshRenderer();
-	explicit MeshRenderer(const glm::vec3& color, bool isLight = false);
-	explicit MeshRenderer(std::shared_ptr<Texture> texture);
+	MeshRenderer(const bool defaultMesh = true, const bool unTextured = true);
+	explicit MeshRenderer(const glm::vec3& color, bool isLight = false); // Obsolete
+	explicit MeshRenderer(std::shared_ptr<Texture> texture); // Obsolete
 	explicit MeshRenderer(const glm::vec3& color, std::shared_ptr<Shader> shader);
 	explicit MeshRenderer(std::shared_ptr<Mesh> mesh, const glm::vec3& color = glm::vec3(1.0f));
+	explicit MeshRenderer(std::shared_ptr<Mesh> mesh, std::shared_ptr<Texture> texture) noexcept;
 	void SetColor(const Vector3& color);
+	void AddMesh(std::shared_ptr<Mesh> mesh, std::shared_ptr<Texture> texture);
 
 	Material& GetMaterial();
 

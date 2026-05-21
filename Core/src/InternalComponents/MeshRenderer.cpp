@@ -35,18 +35,23 @@ std::shared_ptr<Shader> MeshRenderer::GetLightShader()
 	return lightShader;
 }
 
-MeshRenderer::MeshRenderer() : 
-	mesh(MeshFactory::GetMesh(MeshType::Cube)), 
+MeshRenderer::MeshRenderer(const bool defaultMesh, const bool unTextured) : 
 	shader(GetDefaultShader()), 
-	textured(false)
-{ }
+	textured(!unTextured)
+{
+	if(defaultMesh)
+	{
+		meshes.push_back(MeshFactory::GetMesh(MeshType::Cube));
+	}
+}
 
 MeshRenderer::MeshRenderer(const glm::vec3& color, bool isLight) :
-	mesh(MeshFactory::GetMesh(MeshType::Cube)),
 	textured(false),
 	isLight(isLight),
 	material{ color }
 { 
+	meshes.push_back(MeshFactory::GetMesh(MeshType::Cube));
+
 	if (isLight)
 	{
 		shader = GetLightShader();
@@ -57,30 +62,47 @@ MeshRenderer::MeshRenderer(const glm::vec3& color, bool isLight) :
 	}
 }
 
-MeshRenderer::MeshRenderer(std::shared_ptr<Texture> texture) :
-	mesh(MeshFactory::GetMesh(MeshType::Cube)),
-	texture(std::move(texture)),
+MeshRenderer::MeshRenderer(std::shared_ptr<Texture> texture) :	
 	shader(GetDefaultShader()),
 	textured(true)
-{ }
+{
+	meshes.push_back(MeshFactory::GetMesh(MeshType::Cube));
+	textures.push_back(std::move(texture));
+}
 
 MeshRenderer::MeshRenderer(const glm::vec3& color, std::shared_ptr<Shader> shader) :
-	mesh(MeshFactory::GetMesh(MeshType::Cube)),
 	shader(std::move(shader)),
 	textured(false),
 	material{ color }
-{ }
+{
+	meshes.push_back(MeshFactory::GetMesh(MeshType::Cube));
+}
 
 MeshRenderer::MeshRenderer(std::shared_ptr<Mesh> mesh, const glm::vec3& color) :
-	mesh(std::move(mesh)),
 	shader(GetDefaultShader()),
 	textured(false),
 	material{ color }
-{ }
+{
+	meshes.push_back(std::move(mesh));
+}
+
+MeshRenderer::MeshRenderer(std::shared_ptr<Mesh> mesh, std::shared_ptr<Texture> texture) noexcept :
+	shader(GetDefaultShader()),
+	textured(true)
+{
+	meshes.push_back(std::move(mesh));
+	textures.push_back(std::move(texture));
+}
 
 void MeshRenderer::SetColor(const Vector3& color)
 {
 	this->material.color = color;
+}
+
+void MeshRenderer::AddMesh(std::shared_ptr<Mesh> mesh, std::shared_ptr<Texture> texture)
+{
+	meshes.push_back(std::move(mesh));
+	textures.push_back(std::move(texture));
 }
 
 Material& MeshRenderer::GetMaterial() { return material; }
@@ -92,30 +114,35 @@ void MeshRenderer::Render()
 	const glm::mat4& transformMatrix = transform->GetTransformMatrix();
 
 	shader->Use();
-
-	if (textured)
-	{
-		texture->Bind();
-	}
-
 	shader->SendBool(UniformKey::IsTextured, textured);
 	shader->SendMatrix(UniformKey::TransformMatrix, transformMatrix);
 	shader->SendMaterial(material);
 
-	mesh->Draw();
+	for(unsigned int i = 0U; i < meshes.size(); i++)
+	{
+		if (textured && i < textures.size())
+		{
+			textures[i]->Bind();
+		}
+
+		meshes[i]->Draw();
+	}
+	
+
+	
 }
 
 void MeshRenderer::OnGUI()
 {
-	if(ImGui::Checkbox("Textured", &textured) && textured && texture == nullptr)
+	if(ImGui::Checkbox("Textured", &textured) && textured && textures.size() == 0U)
 	{
 		switch (rand() % 2)
 		{
 		case 0:
-			texture = TextureLoader::LoadTexture(TEXTURES_DIRECTORY"brick.jpg");
+			textures.push_back(TextureLoader::LoadTexture(TEXTURES_DIRECTORY"brick.jpg"));
 			break;
 		case 1:
-			texture = TextureLoader::LoadTexture(TEXTURES_DIRECTORY"container.jpg");
+			textextures.push_back(TextureLoader::LoadTexture(TEXTURES_DIRECTORY"container.jpg"));
 			break;
 		default:
 			textured = false;

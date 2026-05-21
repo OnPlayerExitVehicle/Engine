@@ -36,8 +36,14 @@ private:
 	int uniformIds[(int)UniformKey::SIZE];
 
 	std::map<unsigned int, std::string> shaderDirectoryMap;
+	static glm::mat4 const * viewMatrixPtr;
+	static glm::mat4 const * projectionMatrixPtr;
+	static glm::vec3 const * viewPositionPtr;
+	static bool pointersInitialized;
 
 public:
+	static void SetPointers(const glm::mat4* viewMatrixPtr, const glm::mat4* projectionMatrixPtr, const glm::vec3* viewPositionPtr) noexcept;
+
 	Shader();
 	void AttachShader(_STRING_CR_ address, unsigned int type);
 	void Recompile();

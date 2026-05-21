@@ -8,17 +8,19 @@
 #include "Camera.h"
 #include "Input.h"
 #include "MyComponent.h"
+#include <Bullet/src/LinearMath/btIDebugDraw.h>
 
 std::string GUI::newObjectName;
 std::string GUI::address = "127.0.0.1";
 std::string GUI::port = "3390";
 
-void GUI::Init(GLFWwindow* window)
+void GUI::Init(GLFWwindow* window, PhysicsDrawer* physicsDrawer) noexcept
 {
     ImGui::CreateContext();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 130");
     ImGui::StyleColorsDark();
+    this->physicsDrawer = physicsDrawer;
 }
 
 void GUI::Draw()
@@ -32,6 +34,7 @@ void GUI::Draw()
 
     DrawObjectCreator();
     DrawConnectDialog();
+    DrawPhysicsDebug();
 
     FrameEnd();
  
@@ -75,7 +78,12 @@ void GUI::DrawSelectedObjectProps()
             ptr->ActivatePhysics();
         }
     }
-    ImGui::SliderFloat4("Rotation", (float*)&lastSelected->transform->rotation, -1.0f, 1.0f);
+
+    glm::vec3 eulerRotation = lastSelected->transform->rotation.euler();
+    if(ImGui::SliderFloat3("Rotation", (float*)&eulerRotation, -90.0f, 90.0f))
+    {
+        lastSelected->transform->rotation.fromEuler(eulerRotation);
+    }
     ImGui::SliderFloat3("Scale", (float*)&lastSelected->transform->scale, 0.0f, 10.0f);
 
     for (auto ptr : lastSelected->m_componentList)
@@ -226,31 +234,80 @@ void GUI::DrawConnectDialog()
     ImGui::End();
 }
 
-void GUI::DrawObject(std::shared_ptr<GameObject> object)
+void checkbox(const std::string& label, int& currentValue, int value) noexcept
 {
-    if (!object->transform->childList.empty())
+    bool state = currentValue & value;
+    if(ImGui::Checkbox(label.c_str(), &state))
     {
-        if (ImGui::TreeNodeEx(object->name.c_str()))
+        if(state)
         {
-            if (!object->lastlySelected)
-            {
-                object->lastlySelected = true;
-                lastSelected = object;
-            }
+            currentValue |= value;
+        }
+        else
+        {
+            currentValue &= ~value;
+        }
+    }
+}
 
+void GUI::DrawPhysicsDebug() noexcept
+{
+    if(physicsDrawer)
+    {
+        ImGui::Begin("Physics Debug");
+
+        int currentValue = physicsDrawer->getDebugMode();
+
+        checkbox("Draw Wireframe", currentValue, btIDebugDraw::DBG_DrawWireframe);
+        checkbox("Draw AABB", currentValue, btIDebugDraw::DBG_DrawAabb);
+        checkbox("Draw FeaturesText", currentValue, btIDebugDraw::DBG_DrawFeaturesText);
+        checkbox("Draw ContactPoints", currentValue, btIDebugDraw::DBG_DrawContactPoints);
+        checkbox("No Deactivation", currentValue, btIDebugDraw::DBG_NoDeactivation);
+        checkbox("No HelpText", currentValue, btIDebugDraw::DBG_NoHelpText);
+        checkbox("Draw Text", currentValue, btIDebugDraw::DBG_DrawText);
+        checkbox("Profile Timings", currentValue, btIDebugDraw::DBG_ProfileTimings);
+        checkbox("Enable SatComparison", currentValue, btIDebugDraw::DBG_EnableSatComparison);
+        checkbox("Disable BulletLCP", currentValue, btIDebugDraw::DBG_DisableBulletLCP);
+        checkbox("Enable CCD", currentValue, btIDebugDraw::DBG_EnableCCD);
+        checkbox("Draw Constraints", currentValue, btIDebugDraw::DBG_DrawConstraints);
+        checkbox("Draw ConstraintLimits", currentValue, btIDebugDraw::DBG_DrawConstraintLimits);
+        checkbox("Fast Wireframe", currentValue, btIDebugDraw::DBG_FastWireframe);
+        checkbox("Draw Normals", currentValue, btIDebugDraw::DBG_DrawNormals);
+        checkbox("Draw Frames", currentValue, btIDebugDraw::DBG_DrawFrames);
+
+        physicsDrawer->setDebugMode(currentValue);
+
+        ImGui::End();
+    }
+    
+}
+
+void GUI::DrawObject(std::shared_ptr<GameObject> object, unsigned int iterator)
+{
+    /*if (!object->transform->childList.empty())
+    {*/
+        const bool leaf = object->transform->childList.empty();
+        if (ImGui::TreeNodeEx((object->name + "##" + std::to_string(iterator)).c_str(), leaf ? ImGuiTreeNodeFlags_Leaf : 0))
+        {
             for (auto transform : object->transform->childList)
             {
-                DrawObject(transform->gameObject);
+                DrawObject(transform->gameObject, ++iterator);
             }
             ImGui::TreePop();
             //ImGui::TreePush();
         }
-        else
+
+        if(ImGui::IsItemClicked(ImGuiMouseButton_Left))
+        {
+            object->lastlySelected = true;
+            lastSelected = object;
+        }
+        else if(object->lastlySelected && lastSelected != object)
         {
             object->lastlySelected = false;
         }
         
-    }
+    /*}
     else
     {
         if (ImGui::TreeNode(object->name.c_str()))
@@ -267,7 +324,7 @@ void GUI::DrawObject(std::shared_ptr<GameObject> object)
         {
             object->lastlySelected = false;
         }
-    }
+    }*/
 }
 
 void GUI::FrameStart()

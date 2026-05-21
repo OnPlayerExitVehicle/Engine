@@ -13,7 +13,10 @@ public:
 	Quaternion(float _x, float _y, float _z);
 	Quaternion(float _x, float _y, float _z, float _w);
 	Quaternion(const btQuaternion& q);
+	Quaternion(const glm::quat& q) noexcept;
 
 	operator btQuaternion() const;
+	glm::vec3 euler() const noexcept;
+	void fromEuler(const glm::vec3& euler) noexcept;
 	friend std::ostream& operator<<(std::ostream& left, const Quaternion& right);
 };

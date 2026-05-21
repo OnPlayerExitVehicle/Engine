@@ -16,3 +16,6 @@
 [submodule "Dependencies/Sheila"]
 	path = Dependencies/Sheila
 	url = https://github.com/OnPlayerExitVehicle/Sheila
+[submodule "Dependencies/assimp"]
+	path = Dependencies/assimp
+	url = https://github.com/assimp/assimp.git

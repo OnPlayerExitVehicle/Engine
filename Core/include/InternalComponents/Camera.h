@@ -9,17 +9,16 @@ private:
 	glm::mat4 transformMatrix;
 	glm::mat4 viewMatrix;
 	glm::mat4 projectionMatrix;
+	glm::vec3 position;
 
 	const float farClip		= 100.0f;
 	const float nearClip	= 1.0f;
 	const float verticalFOV = 90.0f;
 
-	std::shared_ptr<Shader> defaultShader;
-	std::shared_ptr<Shader> lightShader;
-
 protected:
 	void BeforeRender() override;
 
 public:
+	Camera() noexcept;
 	std::string GetName() override { return typeid(*this).name(); }
 };

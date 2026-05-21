@@ -6,6 +6,7 @@
 #include "Bullet/src/btBulletDynamicsCommon.h"
 #include "GUI.h"
 #include "NetworkClient.h"
+#include "PhysicsDrawer.h"
 
 class Rigidbody;
 
@@ -23,9 +24,11 @@ private:
 	friend class GUI;
 	friend class Rigidbody;
 
+public:
 	bool IsConnected() const;
 	void ConnectToServer(const std::string& address, uint16_t port);
 	void RegisterPhysicsObject(btRigidBody* rigidBody);
+	btDynamicsWorld* GetDynamicsWorld() const noexcept;
 	static bool ContactAddedCallback(btManifoldPoint&, const btCollisionObjectWrapper*, int, int, const btCollisionObjectWrapper*, int, int);
 
 	std::vector<std::shared_ptr<GameObject>> objectList;
@@ -37,6 +40,7 @@ private:
 	btConstraintSolver* physicsSolver;
 	btCollisionConfiguration* physicsCollisionConfig;
 	GUI gui;
+	PhysicsDrawer physicsDrawer;
 
 	
 	/*std::map<uint32_t, std::shared_ptr<Transform>> networkTransformMap;

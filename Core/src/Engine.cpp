@@ -7,6 +7,7 @@
 #include "Rigidbody.h"
 #include "TextureLoader.h"
 #include "ObjectLoader.h"
+#include "Vehicle.h"
 
 Engine::Engine(int windowWidth, int windowHeight)
 {
@@ -20,10 +21,15 @@ Engine::Engine(int windowWidth, int windowHeight)
 
 	InitDefaultBehaviour();
 
-	/*ObjectLoader loader;
-	auto mesh = loader.LoadObject(OBJECTS_DIRECTORY"teapot2.obj");
-	auto teapot = scene->CreateObject("Teapot");
-	teapot->AddComponent<MeshRenderer>(std::move(mesh));*/
+	ObjectLoader loader;
+	auto vehicle = loader.LoadGameObject(scene, OBJECTS_DIRECTORY"audi_a7_55_tfsi.fbx");
+	vehicle->AddComponent<BoxCollider>()->SetLocalScaling({3.0f, 2.0f, 5.0f});
+	vehicle->AddComponent<Rigidbody>(10.0f);
+	vehicle->AddComponent<Vehicle>();
+	/*auto character = scene->CreateObject("Character", Vector3(), Quaternion(), Vector3(0.01f, 0.01f, 0.01f));
+	character->AddComponent<MeshRenderer>(std::move(mesh));
+	character->GetComponent<MeshRenderer>()->GetMaterial().color = {0.0f, 1.0f, 1.0f};
+	character->transform->scale = {0.01f, 0.01f, 0.01f};*/
 }
 
 void Engine::InitWindow(int windowWidth, int windowHeight)
@@ -38,11 +44,11 @@ void Engine::InitWindow(int windowWidth, int windowHeight)
 	assert(window);
 }
 
-//void APIENTRY debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
-//{
-//    if(id != 131185)
-//        std::cout << std::format("Debug callback = [source={}][type={}][id={}][message={}]", source, type, id, message) << std::endl;
-//}
+void APIENTRY debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
+{
+    if(id != 131185)
+        std::cout << std::format("Debug callback = [source={}][type={}][id={}][message={}]", source, type, id, message) << std::endl;
+}
 
 void Engine::InitGraphics()
 {
@@ -51,8 +57,8 @@ void Engine::InitGraphics()
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
-    //glEnable(GL_DEBUG_OUTPUT);
-    //glDebugMessageCallback(debug_callback, nullptr);
+    glEnable(GL_DEBUG_OUTPUT);
+    glDebugMessageCallback(debug_callback, nullptr);
 }
 
 void Engine::InitDefaultBehaviour()
