@@ -22,7 +22,7 @@ void LightSource::BeforeRender()
 	}
 
 	defaultShader->Use();
-	defaultShader->SendVector(UniformKey::LightMaterial_Color, meshRenderer->material.color);
+    defaultShader->SendVector(UniformKey::LightMaterial_Color, meshRenderer->GetFirstMaterial().color);
 	defaultShader->SendVector(UniformKey::LightMaterial_Position, transform->position);
 	defaultShader->SendLightMaterial(lightMaterial);
 }

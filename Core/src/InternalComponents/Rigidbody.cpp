@@ -62,7 +62,6 @@ void Rigidbody::BeforeFixedUpdate()
 	GetGameObject()->GetComponent<Collider>()->GetBulletCollider()->setLocalScaling(transform->scale);
 	//physicsMotion->setWorldTransform(physicsTransform);
 	physicsRigidbody->setWorldTransform(physicsTransform);
-
 }
 
 void Rigidbody::FixedUpdate(float fixedDeltaTime)
@@ -76,11 +75,11 @@ void Rigidbody::FixedUpdate(float fixedDeltaTime)
 
 void Rigidbody::OnCollision(const GameObject& other)
 {
-	std::shared_ptr<MeshRenderer> renderer;
-	if (GetGameObject()->TryGetComponent<MeshRenderer>(renderer) && other.HasComponent<BoxCollider>())
-	{
-		renderer->SetColor(Vector3(1.0f, 0.0f, 0.0f));
-	}
+    // std::shared_ptr<MeshRenderer> renderer;
+    // if (GetGameObject()->TryGetComponent<MeshRenderer>(renderer) && other.HasComponent<BoxCollider>())
+    // {
+    // 	renderer->SetColor(Vector3(1.0f, 0.0f, 0.0f));
+    // }
 	std::cout << "OnCollision with " << other.name << std::endl;
 }
 

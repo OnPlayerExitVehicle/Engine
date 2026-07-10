@@ -17,7 +17,7 @@ std::shared_ptr<GameObject> Component::GetGameObject() const
 	{
 		return m_object.lock();
 	}
-	return nullptr;
+    assert(false);
 }
 
 std::shared_ptr<Transform> Component::GetTransform() const
@@ -26,7 +26,7 @@ std::shared_ptr<Transform> Component::GetTransform() const
 	{
 		return m_transform.lock();
 	}
-	return nullptr;
+    assert(false);
 }
 
 Component::~Component() { }

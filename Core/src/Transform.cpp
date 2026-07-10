@@ -7,6 +7,11 @@ const glm::mat4& Transform::GetTransformMatrix() const
 	return transformMatrix;
 }
 
+Vector3 Transform::GetWorldPosition() const noexcept
+{
+    return glm::vec3(transformMatrix[3]);
+}
+
 void Transform::SetParent(std::shared_ptr<Transform> parent)
 {
     this->parent = parent;
@@ -27,7 +32,7 @@ void Transform::CalculateTransformMatrix()
     {
         if (!parent_shared->calculatedThisFrame)
             parent_shared->CalculateTransformMatrix();
-        transformMatrix *= parent_shared->transformMatrix;
+        transformMatrix = parent_shared->transformMatrix * transformMatrix;
     }
     calculatedThisFrame = true;
 }

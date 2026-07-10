@@ -5,6 +5,7 @@
 #include "GUI.h"
 #include "TextureLoader.h"
 #include "Material.h"
+#include "GameObject.h"
 
 std::shared_ptr<Shader> MeshRenderer::defaultShader;
 std::shared_ptr<Shader> MeshRenderer::lightShader;
@@ -35,22 +36,23 @@ std::shared_ptr<Shader> MeshRenderer::GetLightShader()
 	return lightShader;
 }
 
-MeshRenderer::MeshRenderer(const bool defaultMesh, const bool unTextured) : 
-	shader(GetDefaultShader()), 
-	textured(!unTextured)
+MeshRenderer::MeshRenderer(const bool defaultMesh) :
+    shader(GetDefaultShader())
 {
 	if(defaultMesh)
 	{
 		meshes.push_back(MeshFactory::GetMesh(MeshType::Cube));
+        textures.push_back(nullptr);
+        materials.push_back({});
 	}
 }
 
 MeshRenderer::MeshRenderer(const glm::vec3& color, bool isLight) :
-	textured(false),
-	isLight(isLight),
-	material{ color }
+    isLight(isLight)
 { 
 	meshes.push_back(MeshFactory::GetMesh(MeshType::Cube));
+    textures.push_back(nullptr);
+    materials.push_back({color});
 
 	if (isLight)
 	{
@@ -62,50 +64,58 @@ MeshRenderer::MeshRenderer(const glm::vec3& color, bool isLight) :
 	}
 }
 
-MeshRenderer::MeshRenderer(std::shared_ptr<Texture> texture) :	
-	shader(GetDefaultShader()),
-	textured(true)
+MeshRenderer::MeshRenderer(std::shared_ptr<Texture> texture) :
+    shader(GetDefaultShader())
 {
 	meshes.push_back(MeshFactory::GetMesh(MeshType::Cube));
 	textures.push_back(std::move(texture));
+    materials.push_back({});
 }
 
 MeshRenderer::MeshRenderer(const glm::vec3& color, std::shared_ptr<Shader> shader) :
-	shader(std::move(shader)),
-	textured(false),
-	material{ color }
+    shader(std::move(shader))
 {
 	meshes.push_back(MeshFactory::GetMesh(MeshType::Cube));
+    textures.push_back(nullptr);
+    materials.push_back({});
 }
 
 MeshRenderer::MeshRenderer(std::shared_ptr<Mesh> mesh, const glm::vec3& color) :
-	shader(GetDefaultShader()),
-	textured(false),
-	material{ color }
+    shader(GetDefaultShader())
 {
 	meshes.push_back(std::move(mesh));
+    textures.push_back(nullptr);
+    materials.push_back({color});
 }
 
 MeshRenderer::MeshRenderer(std::shared_ptr<Mesh> mesh, std::shared_ptr<Texture> texture) noexcept :
-	shader(GetDefaultShader()),
-	textured(true)
+    shader(GetDefaultShader())
 {
 	meshes.push_back(std::move(mesh));
 	textures.push_back(std::move(texture));
+    materials.push_back({});
 }
 
-void MeshRenderer::SetColor(const Vector3& color)
-{
-	this->material.color = color;
-}
+// void MeshRenderer::SetColor(const Vector3& color)
+// {
+// 	this->material.color = color;
+// }
 
 void MeshRenderer::AddMesh(std::shared_ptr<Mesh> mesh, std::shared_ptr<Texture> texture)
 {
 	meshes.push_back(std::move(mesh));
-	textures.push_back(std::move(texture));
+    textures.push_back(texture);
+    materials.push_back({});
 }
 
-Material& MeshRenderer::GetMaterial() { return material; }
+void MeshRenderer::AddMesh(std::shared_ptr<Mesh> mesh, const glm::vec3 &color)
+{
+    meshes.push_back(std::move(mesh));
+    textures.push_back(nullptr);
+    materials.push_back({color});
+}
+
+Material& MeshRenderer::GetFirstMaterial() { return *materials.begin(); }
 
 void MeshRenderer::Render()
 {
@@ -114,54 +124,62 @@ void MeshRenderer::Render()
 	const glm::mat4& transformMatrix = transform->GetTransformMatrix();
 
 	shader->Use();
-	shader->SendBool(UniformKey::IsTextured, textured);
 	shader->SendMatrix(UniformKey::TransformMatrix, transformMatrix);
-	shader->SendMaterial(material);
-
+    // std::cout << GetGameObject()->name << std::endl;
+    // std::cout << "Mesh = " << meshes.size() << std::endl;
+    // std::cout << "Materials = " << materials.size() << std::endl;
+    // std::cout << "Textures = " << textures.size() << std::endl;
 	for(unsigned int i = 0U; i < meshes.size(); i++)
 	{
-		if (textured && i < textures.size())
+        shader->SendMaterial(materials[i]);
+        if (textures[i])
 		{
 			textures[i]->Bind();
+            shader->SendBool(UniformKey::IsTextured, true);
+            // const auto& vec = textures;
+            // int a = 3;
+            // std::cout << textures[i]->GetId() << std::endl;
 		}
+        else
+        {
+            shader->SendBool(UniformKey::IsTextured, false);
+            // std::cout << "null" << std::endl;
+        }
 
 		meshes[i]->Draw();
-	}
-	
-
-	
+	}	
 }
 
 void MeshRenderer::OnGUI()
 {
-	if(ImGui::Checkbox("Textured", &textured) && textured && textures.size() == 0U)
-	{
-		switch (rand() % 2)
-		{
-		case 0:
-			textures.push_back(TextureLoader::LoadTexture(TEXTURES_DIRECTORY"brick.jpg"));
-			break;
-		case 1:
-			textextures.push_back(TextureLoader::LoadTexture(TEXTURES_DIRECTORY"container.jpg"));
-			break;
-		default:
-			textured = false;
-			break;
-		}
-	}
+    // if(ImGui::Checkbox("Textured", &textured) && textured && textures.size() == 0U)
+    // {
+    // 	switch (rand() % 2)
+    // 	{
+    // 	case 0:
+    // 		textures.push_back(TextureLoader::LoadTexture(TEXTURES_DIRECTORY"brick.jpg"));
+    // 		break;
+    // 	case 1:
+ //            textures.push_back(TextureLoader::LoadTexture(TEXTURES_DIRECTORY"container.jpg"));
+    // 		break;
+    // 	default:
+    // 		textured = false;
+    // 		break;
+    // 	}
+    // }
 
-	if (!textured)
-	{
-		ImGui::ColorEdit3("Color", (float*) & material.color);
-	}
+    // if (!textured)
+    // {
+    // 	ImGui::ColorEdit3("Color", (float*) & material.color);
+    // }
 
-	if(!isLight)
-	{
-		ImGui::Text("Material Properties");
+    // if(!isLight)
+    // {
+    // 	ImGui::Text("Material Properties");
 
-		ImGui::SliderFloat("Ambient", &material.ambient, .0f, 1.0f);
-		ImGui::SliderFloat("Diffuse", &material.diffuse, .0f, 1.0f);
-		ImGui::SliderFloat("Specular", &material.specular, .0f, 1.0f);
-		ImGui::SliderInt("Shininess", &material.shininess, 2, 50);
-	}
+    // 	ImGui::SliderFloat("Ambient", &material.ambient, .0f, 1.0f);
+    // 	ImGui::SliderFloat("Diffuse", &material.diffuse, .0f, 1.0f);
+    // 	ImGui::SliderFloat("Specular", &material.specular, .0f, 1.0f);
+    // 	ImGui::SliderInt("Shininess", &material.shininess, 2, 50);
+    // }
 }

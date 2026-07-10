@@ -18,7 +18,7 @@ void GUI::Init(GLFWwindow* window, PhysicsDrawer* physicsDrawer) noexcept
 {
     ImGui::CreateContext();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 130");
+    ImGui_ImplOpenGL3_Init("#version 410 core");
     ImGui::StyleColorsDark();
     this->physicsDrawer = physicsDrawer;
 }
@@ -282,25 +282,31 @@ void GUI::DrawPhysicsDebug() noexcept
     
 }
 
-void GUI::DrawObject(std::shared_ptr<GameObject> object, unsigned int iterator)
+bool GUI::DrawObject(std::shared_ptr<GameObject> object, unsigned int iterator)
 {
     /*if (!object->transform->childList.empty())
     {*/
         const bool leaf = object->transform->childList.empty();
+        bool clickedAnyChildren = false;
         if (ImGui::TreeNodeEx((object->name + "##" + std::to_string(iterator)).c_str(), leaf ? ImGuiTreeNodeFlags_Leaf : 0))
         {
             for (auto transform : object->transform->childList)
             {
-                DrawObject(transform->gameObject, ++iterator);
+                clickedAnyChildren |= DrawObject(transform->gameObject, ++iterator);
             }
             ImGui::TreePop();
             //ImGui::TreePush();
         }
 
-        if(ImGui::IsItemClicked(ImGuiMouseButton_Left))
+        if(ImGui::IsItemClicked(ImGuiMouseButton_Left) && !clickedAnyChildren)
         {
             object->lastlySelected = true;
+            if(lastSelected)
+            {
+                lastSelected->lastlySelected = false;
+            }
             lastSelected = object;
+            return true;
         }
         else if(object->lastlySelected && lastSelected != object)
         {
@@ -325,6 +331,8 @@ void GUI::DrawObject(std::shared_ptr<GameObject> object, unsigned int iterator)
             object->lastlySelected = false;
         }
     }*/
+
+    return false;
 }
 
 void GUI::FrameStart()

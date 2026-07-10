@@ -13,6 +13,7 @@
 #include "MeshRenderer.h"
 #include "TextureLoader.h"
 #include <GLM/glm/gtx/matrix_decompose.hpp>
+#include <GLM/glm/gtc/type_ptr.hpp>
 
 ObjectLoader::ObjectLoader()
 {
@@ -51,11 +52,13 @@ void exportFromTransformationMatrix(const glm::mat4& transformationMatrix, std::
 
 }
 
-void processChildNode(Scene* scene, const aiScene* model, std::shared_ptr<GameObject> gameObject, const aiNode* node, std::unordered_map<std::string, std::shared_ptr<Texture>>& loadedTexturesMap) noexcept
+void processChildNode(Scene* scene, const aiScene* model, std::shared_ptr<GameObject> gameObject, aiNode* node, std::unordered_map<std::string, std::shared_ptr<Texture>>& loadedTexturesMap) noexcept
 {
 	if(node)
 	{
 		std::cout << node->mName.C_Str() << std::endl;
+        std::shared_ptr<MeshRenderer> meshRenderer = gameObject->AddComponent<MeshRenderer>(false);
+        exportFromTransformationMatrix(glm::make_mat4(&node->mTransformation.Transpose().a1), gameObject->transform);
 		for(unsigned int i = 0U; i < node->mNumMeshes; i++)
 		{
 			std::vector<MeshFactory::TexturedVertex> vertexList;
@@ -104,24 +107,37 @@ void processChildNode(Scene* scene, const aiScene* model, std::shared_ptr<GameOb
 
 					loadedTexturesMap[pathStr] = texturePtr;
 				}
+                else
+                {
+                    assert(false);
+                }
 			}
 			
-			std::shared_ptr<GameObject> child = scene->CreateObject(std::string(model->mMeshes[node->mMeshes[i]]->mName.C_Str()), Vector3(), Quaternion(), Vector3(1.0f), gameObject->transform);
+            // std::shared_ptr<GameObject> child = scene->CreateObject(std::string(model->mMeshes[node->mMeshes[i]]->mName.C_Str()), Vector3(), Quaternion(), Vector3(1.0f), gameObject->transform);
 
-			if(texturePtr)
-			{
-				child->AddComponent<MeshRenderer>(std::make_shared<Mesh>(vertexList, indexList), texturePtr);
-			}
-			else
-			{
-				child->AddComponent<MeshRenderer>(std::make_shared<Mesh>(vertexList, indexList), glm::vec3(color.r, color.g, color.b));
-			}
+            // if(texturePtr)
+            // {
+            // 	child->AddComponent<MeshRenderer>(std::make_shared<Mesh>(vertexList, indexList), texturePtr);
+            // }
+            // else
+            // {
+            // 	child->AddComponent<MeshRenderer>(std::make_shared<Mesh>(vertexList, indexList), glm::vec3(color.r, color.g, color.b));
+            // }
+
+            if(texturePtr)
+            {
+                meshRenderer->AddMesh(std::make_shared<Mesh>(vertexList, indexList), texturePtr);
+            }
+            else
+            {
+                meshRenderer->AddMesh(std::make_shared<Mesh>(vertexList, indexList), glm::vec3(color.r, color.g, color.b));
+            }
 		}
 		
 
 		for(unsigned int i = 0U; i < node->mNumChildren; i++)
 		{
-			processChildNode(scene, model, scene->CreateObject(std::string(node->mName.C_Str()), Vector3(), Quaternion(), Vector3(1.0f), gameObject->transform), node->mChildren[i], loadedTexturesMap);
+            processChildNode(scene, model, scene->CreateObject(std::string(node->mChildren[i]->mName.C_Str()), Vector3(), Quaternion(), Vector3(1.0f), gameObject->transform), node->mChildren[i], loadedTexturesMap);
 		}
 	}
 }
@@ -132,8 +148,10 @@ std::shared_ptr<GameObject> ObjectLoader::LoadGameObject(Scene* scene, _STRING_C
 	std::vector<MeshFactory::TexturedVertex> vertexList;
 
 	Assimp::Importer importer;
-	//importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 0.001f);
-	const aiScene* model = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_GenNormals | aiProcess_GlobalScale);
+    // importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 0.001f);
+    // importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
+    // importer.SetPropertyFloat(AI_CONFIG_APP_SCALE_KEY, 1.0f);
+    const aiScene* model = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_GenNormals | aiProcess_GlobalScale);
 	std::cerr << importer.GetErrorString() << std::endl;
 	assert(scene);
 	std::unordered_map<std::string, std::shared_ptr<Texture>> loadedTexturesMap;

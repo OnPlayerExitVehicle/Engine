@@ -61,8 +61,8 @@ void Scene::Process()
 			for(unsigned int i = 0U; i < nativeVehicle->getNumWheels(); i++)
 			{
 				//const btTransform tr = nativeVehicle->getWheelInfo(i).m_worldTransform;
-				physicsDrawer.drawCylinder(nativeVehicle->getWheelInfo(i).m_wheelsRadius, nativeVehicle->getWheelInfo(i).m_wheelsRadius * 0.5f, 1, nativeVehicle->getWheelInfo(i).m_worldTransform, btVector3(0.0f, 1.0f, 0.0f));
-				//physicsDrawer.drawLine(nativeVehicle->getChassisWorldTransform().getOrigin(), nativeVehicle->getWheelInfo(i).m_worldTransform.getOrigin(), btVector3(1, 1, 1));
+                physicsDrawer.drawCylinder(nativeVehicle->getWheelInfo(i).m_wheelsRadius, nativeVehicle->getWheelInfo(i).m_wheelsRadius * 0.5f, 1, nativeVehicle->getWheelInfo(i).m_worldTransform, btVector3(0.0f, 1.0f, 0.0f));
+                physicsDrawer.drawLine(nativeVehicle->getChassisWorldTransform().getOrigin(), nativeVehicle->getWheelInfo(i).m_worldTransform.getOrigin(), btVector3(1, 1, 1));
 			}
 		}
 	}

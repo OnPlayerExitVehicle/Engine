@@ -14,7 +14,7 @@ void NetworkColor::Awake()
 
 void NetworkColor::NetworkUpdate(float networkDeltaTime)
 {
-	glm::vec3& currentColor = meshRenderer->GetMaterial().color;
+    glm::vec3& currentColor = meshRenderer->GetFirstMaterial().color;
 
 	if(IsMine())
 	{

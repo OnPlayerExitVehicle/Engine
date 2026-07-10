@@ -12,5 +12,21 @@ public:
 	std::string GetName() override { return typeid(*this).name(); }
 
 private:
+    enum class VehicleWheel
+    {
+        FrontLeft,
+        FrontRight,
+        RearLeft,
+        RearRight,
+        SIZE
+    };
+
+    struct WheelInfo
+    {
+        btWheelInfo* wheelInfo = nullptr;
+        std::shared_ptr<Transform> transform = nullptr;
+    };
+
 	btRaycastVehicle* vehicle = nullptr;
+    WheelInfo wheelInfos[static_cast<int>(VehicleWheel::SIZE)]{nullptr};
 };

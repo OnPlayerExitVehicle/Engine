@@ -24,12 +24,12 @@ private:
 	void DrawConnectDialog();
 	void DrawPhysicsDebug() noexcept;
 
-	void DrawObject(std::shared_ptr<GameObject> object, unsigned int iterator = 0U);
+    bool DrawObject(std::shared_ptr<GameObject> object, unsigned int iterator = 0U);
 
 	void FrameStart();
 	void FrameEnd();
 
-	std::shared_ptr<GameObject> lastSelected;
+    std::shared_ptr<GameObject> lastSelected = nullptr;
 
 	static std::string newObjectName;
 	static std::string address;
