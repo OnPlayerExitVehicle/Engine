@@ -25,11 +25,7 @@ Engine::Engine(int windowWidth, int windowHeight)
 	auto vehicle = loader.LoadGameObject(scene, OBJECTS_DIRECTORY"audi_a7_55_tfsi.fbx");
 	vehicle->AddComponent<BoxCollider>()->SetLocalScaling({3.0f, 2.0f, 5.0f});
 	vehicle->AddComponent<Rigidbody>(10.0f);
-	vehicle->AddComponent<Vehicle>();
-	/*auto character = scene->CreateObject("Character", Vector3(), Quaternion(), Vector3(0.01f, 0.01f, 0.01f));
-	character->AddComponent<MeshRenderer>(std::move(mesh));
-	character->GetComponent<MeshRenderer>()->GetMaterial().color = {0.0f, 1.0f, 1.0f};
-	character->transform->scale = {0.01f, 0.01f, 0.01f};*/
+	/*vehicle->AddComponent<Vehicle>();*/
 }
 
 void Engine::InitWindow(int windowWidth, int windowHeight)

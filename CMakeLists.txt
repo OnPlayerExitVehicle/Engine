@@ -10,6 +10,10 @@ set(SHEILA_INCLUDE_DIR "./Dependencies/Sheila/Client/include" "./Dependencies/Sh
 
 include_directories(${NETWORKING_INCLUDE_DIR} ${DEPENDENCY_DIR}/Bullet/src ${DEPENDENCY_DIR}/ASIO/asio/include ${SHEILA_INCLUDE_DIR})
 
+if(MSVC)
+    add_compile_options(/MP)
+endif()
+
 add_subdirectory ("Networking" EXCLUDE_FROM_ALL)
 add_subdirectory ("Core")
 #add_subdirectory ("Server" EXCLUDE_FROM_ALL)

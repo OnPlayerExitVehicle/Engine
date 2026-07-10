@@ -96,11 +96,6 @@ MeshRenderer::MeshRenderer(std::shared_ptr<Mesh> mesh, std::shared_ptr<Texture> 
     materials.push_back({});
 }
 
-// void MeshRenderer::SetColor(const Vector3& color)
-// {
-// 	this->material.color = color;
-// }
-
 void MeshRenderer::AddMesh(std::shared_ptr<Mesh> mesh, std::shared_ptr<Texture> texture)
 {
 	meshes.push_back(std::move(mesh));
@@ -125,10 +120,7 @@ void MeshRenderer::Render()
 
 	shader->Use();
 	shader->SendMatrix(UniformKey::TransformMatrix, transformMatrix);
-    // std::cout << GetGameObject()->name << std::endl;
-    // std::cout << "Mesh = " << meshes.size() << std::endl;
-    // std::cout << "Materials = " << materials.size() << std::endl;
-    // std::cout << "Textures = " << textures.size() << std::endl;
+
 	for(unsigned int i = 0U; i < meshes.size(); i++)
 	{
         shader->SendMaterial(materials[i]);
@@ -136,14 +128,10 @@ void MeshRenderer::Render()
 		{
 			textures[i]->Bind();
             shader->SendBool(UniformKey::IsTextured, true);
-            // const auto& vec = textures;
-            // int a = 3;
-            // std::cout << textures[i]->GetId() << std::endl;
 		}
         else
         {
             shader->SendBool(UniformKey::IsTextured, false);
-            // std::cout << "null" << std::endl;
         }
 
 		meshes[i]->Draw();
@@ -152,34 +140,5 @@ void MeshRenderer::Render()
 
 void MeshRenderer::OnGUI()
 {
-    // if(ImGui::Checkbox("Textured", &textured) && textured && textures.size() == 0U)
-    // {
-    // 	switch (rand() % 2)
-    // 	{
-    // 	case 0:
-    // 		textures.push_back(TextureLoader::LoadTexture(TEXTURES_DIRECTORY"brick.jpg"));
-    // 		break;
-    // 	case 1:
- //            textures.push_back(TextureLoader::LoadTexture(TEXTURES_DIRECTORY"container.jpg"));
-    // 		break;
-    // 	default:
-    // 		textured = false;
-    // 		break;
-    // 	}
-    // }
-
-    // if (!textured)
-    // {
-    // 	ImGui::ColorEdit3("Color", (float*) & material.color);
-    // }
-
-    // if(!isLight)
-    // {
-    // 	ImGui::Text("Material Properties");
-
-    // 	ImGui::SliderFloat("Ambient", &material.ambient, .0f, 1.0f);
-    // 	ImGui::SliderFloat("Diffuse", &material.diffuse, .0f, 1.0f);
-    // 	ImGui::SliderFloat("Specular", &material.specular, .0f, 1.0f);
-    // 	ImGui::SliderInt("Shininess", &material.shininess, 2, 50);
-    // }
+    
 }

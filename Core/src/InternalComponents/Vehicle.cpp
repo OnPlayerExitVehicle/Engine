@@ -24,7 +24,7 @@ void Vehicle::Awake()
 	for(unsigned int i = 0U; i < childList.size(); i++)
 	{
 		const std::string& name = childList[i]->gameObject->name;
-        // std::cout << name << std::endl;
+
         childList[i]->CalculateTransformMatrix();
 		if(name == "FL")
 		{
@@ -45,14 +45,6 @@ void Vehicle::Awake()
 	}
 
     assert(vehicle->getNumWheels() == 4);
-
-	//btVector3 wheelDirection(0, -1, 0);
-	//btVector3 wheelAxle(-1, 0, 0);
-	/*vehicle->addWheel(btVector3(-1, 1, 1.5f), {0, 1, 0}, {-1, 0, 0}, 0.6f, 0.1f, tuning, true);
-	vehicle->addWheel(btVector3(1, 0, 1.5f), {0, 1, 0}, {-1, 0, 0}, 0.6f, 0.1f, tuning, true);
-
-	vehicle->addWheel(btVector3(-1, 0, -1.5f), {0, -1, 0}, {1, 0, 0}, 0.6f, 0.1f, tuning, false);
-	vehicle->addWheel(btVector3(1, 0, -1.5f), {0, -1, 0}, {1, 0, 0}, 0.6f, 0.1f, tuning, false);*/
 	vehicle->resetSuspension();
 }
 
@@ -63,10 +55,11 @@ void Vehicle::BeforeFixedUpdate()
 
 void Vehicle::FixedUpdate(float fixedDeltaTime)
 {
-    GetTransform()->parent->CalculateTransformMatrix();
+    GetTransform()->CalculateTransformMatrix();
+    glm::mat4 parentInverse = glm::inverse(GetTransform()->transformMatrix);
+    
     for(unsigned int i = 0U; i < static_cast<int>(VehicleWheel::SIZE); i++)
     {
-        glm::mat4 parentInverse = glm::inverse(GetTransform()->parent->transformMatrix);
         float mtx[16];
         wheelInfos[i].wheelInfo->m_worldTransform.getOpenGLMatrix(mtx);
         glm::mat4 newMatrix = glm::make_mat4(mtx);
@@ -82,10 +75,6 @@ void Vehicle::FixedUpdate(float fixedDeltaTime)
             wheelInfos[i].transform->position = pos;
             wheelInfos[i].transform->rotation = rot;
             wheelInfos[i].transform->scale = scale;
-        }
-        else
-        {
-            assert(false);
         }
     }
 }

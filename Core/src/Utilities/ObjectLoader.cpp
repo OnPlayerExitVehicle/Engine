@@ -42,21 +42,12 @@ void exportFromTransformationMatrix(const glm::mat4& transformationMatrix, std::
 	{
 		assert(false);
 	}
-	/*transform->position = glm::vec3(transformationMatrix[3]);
-	const glm::vec3 baseX = transformationMatrix[0];
-	const glm::vec3 baseY = transformationMatrix[1];
-	const glm::vec3 baseZ = transformationMatrix[2];
-	transform->scale.x = baseX.length();
-	transform->scale.y = baseY.length();
-	transform->scale.z = baseZ.length();*/
-
 }
 
 void processChildNode(Scene* scene, const aiScene* model, std::shared_ptr<GameObject> gameObject, aiNode* node, std::unordered_map<std::string, std::shared_ptr<Texture>>& loadedTexturesMap) noexcept
 {
 	if(node)
 	{
-		std::cout << node->mName.C_Str() << std::endl;
         std::shared_ptr<MeshRenderer> meshRenderer = gameObject->AddComponent<MeshRenderer>(false);
         exportFromTransformationMatrix(glm::make_mat4(&node->mTransformation.Transpose().a1), gameObject->transform);
 		for(unsigned int i = 0U; i < node->mNumMeshes; i++)
@@ -112,17 +103,6 @@ void processChildNode(Scene* scene, const aiScene* model, std::shared_ptr<GameOb
                     assert(false);
                 }
 			}
-			
-            // std::shared_ptr<GameObject> child = scene->CreateObject(std::string(model->mMeshes[node->mMeshes[i]]->mName.C_Str()), Vector3(), Quaternion(), Vector3(1.0f), gameObject->transform);
-
-            // if(texturePtr)
-            // {
-            // 	child->AddComponent<MeshRenderer>(std::make_shared<Mesh>(vertexList, indexList), texturePtr);
-            // }
-            // else
-            // {
-            // 	child->AddComponent<MeshRenderer>(std::make_shared<Mesh>(vertexList, indexList), glm::vec3(color.r, color.g, color.b));
-            // }
 
             if(texturePtr)
             {
@@ -144,18 +124,22 @@ void processChildNode(Scene* scene, const aiScene* model, std::shared_ptr<GameOb
 
 std::shared_ptr<GameObject> ObjectLoader::LoadGameObject(Scene* scene, _STRING_CR_ path)
 {
+	assert(scene);
+
 	std::vector<unsigned int> indexList;
 	std::vector<MeshFactory::TexturedVertex> vertexList;
 
 	Assimp::Importer importer;
-    // importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 0.001f);
-    // importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
-    // importer.SetPropertyFloat(AI_CONFIG_APP_SCALE_KEY, 1.0f);
     const aiScene* model = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_GenNormals | aiProcess_GlobalScale);
-	std::cerr << importer.GetErrorString() << std::endl;
-	assert(scene);
+	
+	if(!model)
+	{
+		std::cerr << importer.GetErrorString() << std::endl;
+		assert(false);
+	}
+
 	std::unordered_map<std::string, std::shared_ptr<Texture>> loadedTexturesMap;
-	std::shared_ptr<GameObject> gameObject = scene->CreateObject("Character");
+	std::shared_ptr<GameObject> gameObject = scene->CreateObject("Object");
 	processChildNode(scene, model, gameObject, model->mRootNode, loadedTexturesMap);
 
 	return gameObject;
