@@ -9,11 +9,12 @@
 #include <string>
 
 class GameObject;
+class PhysicsDrawer;
 
 class GUI
 {
 public:
-	void Init(GLFWwindow* window);
+	void Init(GLFWwindow* window, PhysicsDrawer* physicsDrawer) noexcept;
 	void Draw();
 
 private:
@@ -21,15 +22,17 @@ private:
 	void DrawSelectedObjectProps();
 	void DrawObjectCreator();
 	void DrawConnectDialog();
+	void DrawPhysicsDebug() noexcept;
 
-	void DrawObject(std::shared_ptr<GameObject> object);
+    bool DrawObject(std::shared_ptr<GameObject> object, unsigned int iterator = 0U);
 
 	void FrameStart();
 	void FrameEnd();
 
-	std::shared_ptr<GameObject> lastSelected;
+    std::shared_ptr<GameObject> lastSelected = nullptr;
 
 	static std::string newObjectName;
 	static std::string address;
 	static std::string port;
+	PhysicsDrawer* physicsDrawer;
 };

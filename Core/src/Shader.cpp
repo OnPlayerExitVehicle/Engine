@@ -20,8 +20,20 @@ std::map<UniformKey, std::string> Shader::uniformNameMap = {
 	{UniformKey::LightMaterial_Ambient, "light.ambient"},
 	{UniformKey::LightMaterial_Diffuse, "light.diffuse"},
 	{UniformKey::LightMaterial_Specular, "light.specular"}
-
 };
+
+glm::mat4 const * Shader::viewMatrixPtr = nullptr;
+glm::mat4 const * Shader::projectionMatrixPtr = nullptr;
+glm::vec3 const * Shader::viewPositionPtr = nullptr;
+bool Shader::pointersInitialized = false;
+
+void Shader::SetPointers(const glm::mat4* viewMatrixPtr, const glm::mat4* projectionMatrixPtr, const glm::vec3* viewPositionPtr) noexcept
+{
+	Shader::viewMatrixPtr = viewMatrixPtr;
+	Shader::projectionMatrixPtr = projectionMatrixPtr;
+	Shader::viewPositionPtr = viewPositionPtr;
+	Shader::pointersInitialized = true;
+}
 
 Shader::Shader() : id(glCreateProgram()) { }
 
@@ -99,6 +111,22 @@ void Shader::Recompile()
 void Shader::Use()
 {
 	glUseProgram(id);
+
+	if(pointersInitialized)
+	{
+		if(uniformIds[(int)UniformKey::ProjectionMatrix] != -1)
+		{
+			SendMatrix(UniformKey::ProjectionMatrix, *projectionMatrixPtr);
+		}
+		if(uniformIds[(int)UniformKey::ViewMatrix] != -1)
+		{
+			SendMatrix(UniformKey::ViewMatrix, *viewMatrixPtr);
+		}
+		if(uniformIds[(int)UniformKey::ViewPosition] != -1)
+		{
+			SendVector(UniformKey::ViewPosition, *viewPositionPtr);
+		}
+	}
 }
 
 void Shader::Link()

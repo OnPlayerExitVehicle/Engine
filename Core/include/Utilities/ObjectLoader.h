@@ -6,13 +6,15 @@
 #include <memory>
 
 class Mesh;
+class Scene;
+class GameObject;
 
 class ObjectLoader
 {
 public:
 	ObjectLoader();
 	~ObjectLoader();
-	std::shared_ptr<Mesh> LoadObject(_STRING_CR_ path);
+	std::shared_ptr<GameObject> LoadGameObject(Scene* scene, _STRING_CR_ path);
 
 private:
 	//std::unordered_map<int, std::function<std::vector<unsigned int>&(int*, int)>> lineFunctionMap;

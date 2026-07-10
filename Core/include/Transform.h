@@ -22,6 +22,7 @@ public:
 
 	Transform(std::shared_ptr<GameObject> object) : gameObject(object) { }
 	const glm::mat4& GetTransformMatrix() const;
+    Vector3 GetWorldPosition() const noexcept;
 	void SetParent(std::shared_ptr<Transform> parent);
 
 private:
@@ -30,6 +31,7 @@ private:
 	friend class Rigidbody;
 	friend class GameObject;
 	friend class GUI;
+    friend class Vehicle;
 
 	glm::mat4 transformMatrix;
 	bool calculatedThisFrame = false;

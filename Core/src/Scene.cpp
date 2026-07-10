@@ -5,12 +5,13 @@
 #include <iostream>
 #include "MeshRenderer.h"
 #include <functional>
+#include "Vehicle.h"
 
 Scene* Scene::Instance;
 
 Scene::Scene(GLFWwindow* window) : networkClient(this)
 {
-	gui.Init(window);
+	gui.Init(window, &physicsDrawer);
 	assert(Instance == nullptr);
 	Instance = this;
 
@@ -21,8 +22,13 @@ Scene::Scene(GLFWwindow* window) : networkClient(this)
 	physicsWorld		   = new btDiscreteDynamicsWorld(physicsDispatcher, physicsBroadPhase, physicsSolver, physicsCollisionConfig);
 
 	physicsWorld->setGravity(btVector3(.0f, -9.81f, .0f));
+	physicsWorld->setDebugDrawer(&physicsDrawer);
+	physicsDrawer.setDebugMode(btIDebugDraw::DBG_DrawWireframe);
 
 	gContactAddedCallback = &Scene::ContactAddedCallback;
+	auto& solverInfo = physicsWorld->getSolverInfo();
+	solverInfo.m_erp = 0.5;
+	solverInfo.m_erp2 = 0.5;
 }
 
 void Scene::Process()
@@ -45,6 +51,20 @@ void Scene::Process()
 		go->InvokeRender(dt);
 
 	gui.Draw();
+
+	for(auto& go : objectList)
+	{
+		std::shared_ptr<Vehicle> vehicle;
+		if(go->TryGetComponent(vehicle))
+		{
+			const btRaycastVehicle* nativeVehicle = vehicle->GetNativeVehiclePtr();
+			for(unsigned int i = 0U; i < nativeVehicle->getNumWheels(); i++)
+			{
+                physicsDrawer.drawCylinder(nativeVehicle->getWheelInfo(i).m_wheelsRadius, nativeVehicle->getWheelInfo(i).m_wheelsRadius * 0.5f, 1, nativeVehicle->getWheelInfo(i).m_worldTransform, btVector3(0.0f, 1.0f, 0.0f));
+			}
+		}
+	}
+	physicsDrawer.Render();
 }
 
 void Scene::ProcessFixedUpdate()
@@ -54,9 +74,10 @@ void Scene::ProcessFixedUpdate()
 		
 	float fixedDeltaTime = Time::FixedDt;
 	physicsWorld->stepSimulation(fixedDeltaTime);
+	physicsWorld->debugDrawWorld();
 
 	for (auto& go : objectList)
-		go->InvokeFixedUpdate(fixedDeltaTime);
+		go->InvokeFixedUpdate(fixedDeltaTime);	
 }
 
 void Scene::ProcessNetworkUpdate()
@@ -82,6 +103,11 @@ void Scene::RegisterPhysicsObject(btRigidBody* rigidBody)
 	physicsWorld->addRigidBody(rigidBody);
 }
 
+btDynamicsWorld* Scene::GetDynamicsWorld() const noexcept
+{
+	return physicsWorld;
+}
+
 bool Scene::ContactAddedCallback(btManifoldPoint& contactPoint, const btCollisionObjectWrapper* object1, int id0, int index0, const btCollisionObjectWrapper* object2, int id1, int index1)
 {
 	GameObject* go1 = static_cast<GameObject*>(object1->getCollisionObject()->getUserPointer());
@@ -101,7 +127,11 @@ std::shared_ptr<GameObject> Scene::CreateObject(const std::string& name, const V
 	gameObject->transform->position = position;
 	gameObject->transform->rotation = rotation;
 	gameObject->transform->scale	= scale;
-	gameObject->transform->parent	= parent;
+	if(parent)
+	{
+		gameObject->transform->SetParent(parent);
+	}
+	
 
 	gameObject->InvokeAwake();
 

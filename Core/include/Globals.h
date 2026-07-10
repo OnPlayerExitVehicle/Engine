@@ -1,7 +1,7 @@
 #pragma once
 
-constexpr inline int DEFAULT_WINDOW_WIDTH = 960;
-constexpr inline int DEFAULT_WINDOW_HEIGHT = 540;
+constexpr inline int DEFAULT_WINDOW_WIDTH = 2560;
+constexpr inline int DEFAULT_WINDOW_HEIGHT = 1440;
 
 inline int WINDOW_WIDTH  = DEFAULT_WINDOW_WIDTH;
 inline int WINDOW_HEIGHT = DEFAULT_WINDOW_HEIGHT;

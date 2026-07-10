@@ -5,6 +5,7 @@
 #include "GUI.h"
 #include "TextureLoader.h"
 #include "Material.h"
+#include "GameObject.h"
 
 std::shared_ptr<Shader> MeshRenderer::defaultShader;
 std::shared_ptr<Shader> MeshRenderer::lightShader;
@@ -35,18 +36,24 @@ std::shared_ptr<Shader> MeshRenderer::GetLightShader()
 	return lightShader;
 }
 
-MeshRenderer::MeshRenderer() : 
-	mesh(MeshFactory::GetMesh(MeshType::Cube)), 
-	shader(GetDefaultShader()), 
-	textured(false)
-{ }
+MeshRenderer::MeshRenderer(const bool defaultMesh) :
+    shader(GetDefaultShader())
+{
+	if(defaultMesh)
+	{
+		meshes.push_back(MeshFactory::GetMesh(MeshType::Cube));
+        textures.push_back(nullptr);
+        materials.push_back({});
+	}
+}
 
 MeshRenderer::MeshRenderer(const glm::vec3& color, bool isLight) :
-	mesh(MeshFactory::GetMesh(MeshType::Cube)),
-	textured(false),
-	isLight(isLight),
-	material{ color }
+    isLight(isLight)
 { 
+	meshes.push_back(MeshFactory::GetMesh(MeshType::Cube));
+    textures.push_back(nullptr);
+    materials.push_back({color});
+
 	if (isLight)
 	{
 		shader = GetLightShader();
@@ -58,32 +65,52 @@ MeshRenderer::MeshRenderer(const glm::vec3& color, bool isLight) :
 }
 
 MeshRenderer::MeshRenderer(std::shared_ptr<Texture> texture) :
-	mesh(MeshFactory::GetMesh(MeshType::Cube)),
-	texture(std::move(texture)),
-	shader(GetDefaultShader()),
-	textured(true)
-{ }
-
-MeshRenderer::MeshRenderer(const glm::vec3& color, std::shared_ptr<Shader> shader) :
-	mesh(MeshFactory::GetMesh(MeshType::Cube)),
-	shader(std::move(shader)),
-	textured(false),
-	material{ color }
-{ }
-
-MeshRenderer::MeshRenderer(std::shared_ptr<Mesh> mesh, const glm::vec3& color) :
-	mesh(std::move(mesh)),
-	shader(GetDefaultShader()),
-	textured(false),
-	material{ color }
-{ }
-
-void MeshRenderer::SetColor(const Vector3& color)
+    shader(GetDefaultShader())
 {
-	this->material.color = color;
+	meshes.push_back(MeshFactory::GetMesh(MeshType::Cube));
+	textures.push_back(std::move(texture));
+    materials.push_back({});
 }
 
-Material& MeshRenderer::GetMaterial() { return material; }
+MeshRenderer::MeshRenderer(const glm::vec3& color, std::shared_ptr<Shader> shader) :
+    shader(std::move(shader))
+{
+	meshes.push_back(MeshFactory::GetMesh(MeshType::Cube));
+    textures.push_back(nullptr);
+    materials.push_back({});
+}
+
+MeshRenderer::MeshRenderer(std::shared_ptr<Mesh> mesh, const glm::vec3& color) :
+    shader(GetDefaultShader())
+{
+	meshes.push_back(std::move(mesh));
+    textures.push_back(nullptr);
+    materials.push_back({color});
+}
+
+MeshRenderer::MeshRenderer(std::shared_ptr<Mesh> mesh, std::shared_ptr<Texture> texture) noexcept :
+    shader(GetDefaultShader())
+{
+	meshes.push_back(std::move(mesh));
+	textures.push_back(std::move(texture));
+    materials.push_back({});
+}
+
+void MeshRenderer::AddMesh(std::shared_ptr<Mesh> mesh, std::shared_ptr<Texture> texture)
+{
+	meshes.push_back(std::move(mesh));
+    textures.push_back(texture);
+    materials.push_back({});
+}
+
+void MeshRenderer::AddMesh(std::shared_ptr<Mesh> mesh, const glm::vec3 &color)
+{
+    meshes.push_back(std::move(mesh));
+    textures.push_back(nullptr);
+    materials.push_back({color});
+}
+
+Material& MeshRenderer::GetFirstMaterial() { return *materials.begin(); }
 
 void MeshRenderer::Render()
 {
@@ -92,49 +119,26 @@ void MeshRenderer::Render()
 	const glm::mat4& transformMatrix = transform->GetTransformMatrix();
 
 	shader->Use();
-
-	if (textured)
-	{
-		texture->Bind();
-	}
-
-	shader->SendBool(UniformKey::IsTextured, textured);
 	shader->SendMatrix(UniformKey::TransformMatrix, transformMatrix);
-	shader->SendMaterial(material);
 
-	mesh->Draw();
+	for(unsigned int i = 0U; i < meshes.size(); i++)
+	{
+        shader->SendMaterial(materials[i]);
+        if (textures[i])
+		{
+			textures[i]->Bind();
+            shader->SendBool(UniformKey::IsTextured, true);
+		}
+        else
+        {
+            shader->SendBool(UniformKey::IsTextured, false);
+        }
+
+		meshes[i]->Draw();
+	}	
 }
 
 void MeshRenderer::OnGUI()
 {
-	if(ImGui::Checkbox("Textured", &textured) && textured && texture == nullptr)
-	{
-		switch (rand() % 2)
-		{
-		case 0:
-			texture = TextureLoader::LoadTexture(TEXTURES_DIRECTORY"brick.jpg");
-			break;
-		case 1:
-			texture = TextureLoader::LoadTexture(TEXTURES_DIRECTORY"container.jpg");
-			break;
-		default:
-			textured = false;
-			break;
-		}
-	}
-
-	if (!textured)
-	{
-		ImGui::ColorEdit3("Color", (float*) & material.color);
-	}
-
-	if(!isLight)
-	{
-		ImGui::Text("Material Properties");
-
-		ImGui::SliderFloat("Ambient", &material.ambient, .0f, 1.0f);
-		ImGui::SliderFloat("Diffuse", &material.diffuse, .0f, 1.0f);
-		ImGui::SliderFloat("Specular", &material.specular, .0f, 1.0f);
-		ImGui::SliderInt("Shininess", &material.shininess, 2, 50);
-	}
+    
 }

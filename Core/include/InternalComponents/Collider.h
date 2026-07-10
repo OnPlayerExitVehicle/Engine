@@ -8,6 +8,8 @@ protected:
 	btCollisionShape* collider;
 
 public:
-	btCollisionShape* GetBulletCollider();
+	btCollisionShape* GetBulletCollider() const noexcept;
+	Vector3 GetLocalScaling() const noexcept;
+	void SetLocalScaling(const Vector3& scaling) noexcept;
 	std::string GetName() override { return typeid(*this).name(); }
 };

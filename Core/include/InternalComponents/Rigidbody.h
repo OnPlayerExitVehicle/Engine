@@ -16,7 +16,7 @@ public:
 	void ApplyTorque(const Vector3& torque);
 	void ApplyImpulse(const Vector3& impulse, const Vector3& relativePosition);
 	void ApplyPushImpulse(const Vector3& impulse, const Vector3& relativePosition);
-	
+	btRigidBody* GetRigidbody() const noexcept;
 
 private:
 

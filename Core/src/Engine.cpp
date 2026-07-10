@@ -7,6 +7,7 @@
 #include "Rigidbody.h"
 #include "TextureLoader.h"
 #include "ObjectLoader.h"
+#include "Vehicle.h"
 
 Engine::Engine(int windowWidth, int windowHeight)
 {
@@ -20,29 +21,39 @@ Engine::Engine(int windowWidth, int windowHeight)
 
 	InitDefaultBehaviour();
 
-	/*ObjectLoader loader;
-	auto mesh = loader.LoadObject(OBJECTS_DIRECTORY"teapot2.obj");
-	auto teapot = scene->CreateObject("Teapot");
-	teapot->AddComponent<MeshRenderer>(std::move(mesh));*/
+	ObjectLoader loader;
+	auto vehicle = loader.LoadGameObject(scene, OBJECTS_DIRECTORY"audi_a7_55_tfsi.fbx");
+	vehicle->AddComponent<BoxCollider>()->SetLocalScaling({3.0f, 2.0f, 5.0f});
+	vehicle->AddComponent<Rigidbody>(10.0f);
+	/*vehicle->AddComponent<Vehicle>();*/
 }
 
 void Engine::InitWindow(int windowWidth, int windowHeight)
 {
-#ifdef NDEBUG
-    glfwInit();
-#else
-	assert(glfwInit());
-#endif
+    int ret = glfwInit();
+    if(!ret)
+    {
+        std::cerr << ret << std::endl;
+        return;
+    }
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-	window = glfwCreateWindow(windowWidth, windowHeight, std::format("Engine ({} bit)", sizeof(void*) * 8).c_str(), nullptr, nullptr);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    int monitorCount = 0;
+    GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
+    assert(monitorCount);
+    int xPos, yPos, width, height;
+    glfwGetMonitorWorkarea(monitors[0], &xPos, &yPos, &width, &height);
+    window = glfwCreateWindow(width, height, std::format("Engine ({} bit)", sizeof(void*) * 8).c_str(), nullptr, nullptr);
 	assert(window);
 }
 
-//void APIENTRY debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
-//{
-//    if(id != 131185)
-//        std::cout << std::format("Debug callback = [source={}][type={}][id={}][message={}]", source, type, id, message) << std::endl;
-//}
+void APIENTRY debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
+{
+    if(id != 131185)
+        std::cout << std::format("Debug callback = [source={}][type={}][id={}][message={}]", source, type, id, message) << std::endl;
+}
 
 void Engine::InitGraphics()
 {
